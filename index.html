@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A statistics homework notebook: interactive experiments, cryptography and the mathematics behind them.">
+  <title>Statistics · Homework notebook</title>
+  <style>
+    /* The same black, teal and slate palette as HW1 and HW2. */
+    :root { color-scheme:dark; --bg:#000; --panel:#142235; --deep:#101d2d; --ink:#69d6ca; --muted:#9dbbc5; --line:#2d4054; --accent:#32b4a4; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; scroll-padding-top:24px; }
+    body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.65 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    a { color:inherit; text-decoration:none; }
+    button { font:inherit; }
+    a:focus-visible,button:focus-visible { outline:3px solid var(--ink); outline-offset:6px; }
+    .wrap { width:min(1160px,calc(100% - 64px)); margin:auto; }
+    .skip { position:absolute; top:-100px; left:16px; background:var(--panel); padding:10px 18px; z-index:2; }
+    .skip:focus { top:12px; }
+    header { padding:25px 0; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; gap:20px; }
+    .brand { display:flex; align-items:center; gap:12px; font-size:17px; font-weight:750; letter-spacing:.4px; }
+    .brand-mark { display:grid; place-items:center; width:35px; height:35px; background:var(--panel); border:1px solid var(--line); border-radius:8px; font:24px Georgia,serif; }
+    nav { display:flex; gap:26px; font-size:13px; color:var(--muted); }
+    nav a:hover,footer a:hover { color:var(--ink); }
+    .eyebrow { font:11px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace; letter-spacing:1.8px; text-transform:uppercase; color:var(--accent); }
+    .hero { display:grid; grid-template-columns:1.25fr .75fr; gap:64px; align-items:center; padding:76px 0 65px; }
+    h1 { font-size:clamp(46px,6vw,78px); font-weight:500; line-height:1.06; letter-spacing:-3px; margin:20px 0 24px; }
+    h1 em { font-family:Georgia,serif; font-weight:400; }
+    .intro { max-width:530px; color:var(--muted); font-size:17px; margin:0 0 30px; }
+    .primary { display:inline-flex; align-items:center; gap:40px; background:#087e65; color:#f4fffc; padding:13px 20px; border:1px solid #168f7b; border-radius:6px; font-size:14px; }
+    .primary:hover { background:#0b9477; }
+    .notebook { background:linear-gradient(140deg,#1b3047,var(--deep)); border:1px solid var(--line); border-radius:16px; padding:27px; }
+    .notebook-head { display:flex; justify-content:space-between; align-items:center; font:10px ui-monospace,monospace; letter-spacing:1.5px; }
+    .status-dot { width:6px; height:6px; display:inline-block; border-radius:50%; background:var(--accent); margin-right:7px; }
+    .notebook-symbol { font:italic 96px/1.4 Georgia,serif; text-align:center; color:#84dfd3; margin:16px 0 5px; }
+    .notebook p { color:var(--muted); font-size:13px; margin:0 0 20px; text-align:center; }
+    .notebook-line { border-top:1px solid #3c576b; display:flex; justify-content:space-between; gap:15px; padding:12px 0; font:11px/1.5 ui-monospace,monospace; }
+    .notebook-line:last-child { padding-bottom:0; }
+    .notebook-line span:last-child { color:var(--muted); }
+    .summary { display:flex; justify-content:space-between; align-items:center; gap:20px; padding:17px 0; border-block:1px solid var(--line); font-size:12px; color:var(--muted); }
+    .summary strong { font-weight:650; color:var(--ink); }
+    .section { padding:62px 0; }
+    .section-head { display:flex; justify-content:space-between; align-items:end; gap:35px; margin-bottom:30px; }
+    h2 { font-size:clamp(29px,4vw,40px); line-height:1.2; font-weight:500; letter-spacing:-1.3px; margin:9px 0 0; }
+    .section-head p { color:var(--muted); font-size:14px; max-width:330px; margin:0; }
+    .homeworks { display:grid; gap:17px; }
+    .homework { background:var(--panel); border:1px solid var(--line); border-radius:12px; display:grid; grid-template-columns:70px 1fr 150px; align-items:center; gap:25px; padding:28px; }
+    a.homework { transition:border-color .18s,background .18s; }
+    a.homework:hover { border-color:#478b89; background:#1b3047; }
+    .number { font:42px/1 Georgia,serif; color:#69d6ca; align-self:start; padding-top:8px; }
+    .meta { display:flex; flex-wrap:wrap; gap:12px; align-items:center; font:10px/1.5 ui-monospace,monospace; text-transform:uppercase; letter-spacing:1.3px; }
+    .badge { border:1px solid #3c576b; border-radius:20px; padding:3px 9px; color:#a2f0e4; letter-spacing:.5px; }
+    h3 { font-size:24px; font-weight:500; line-height:1.3; letter-spacing:-.5px; margin:12px 0 10px; }
+    .homework p { max-width:620px; font-size:14px; color:var(--muted); margin:0; }
+    .tags { display:flex; flex-wrap:wrap; gap:7px; padding:0; list-style:none; margin:17px 0 0; }
+    .tags li { background:var(--deep); color:#91d2cc; border:1px solid #2d4054; border-radius:4px; padding:3px 8px; font:11px/1.6 ui-monospace,monospace; }
+    .open { justify-self:end; font-size:13px; display:flex; gap:15px; align-items:center; }
+    .open span { font-size:22px; }
+    .pending { background:#0b1420; }
+    .pending .number { color:var(--muted); }
+    .pending .badge,.pending .open { color:var(--muted); }
+    .topics { border-top:1px solid var(--line); }
+    .topic-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:32px; margin-top:32px; }
+    .topic { border-top:1px solid var(--line); padding-top:19px; }
+    .topic h3 { font-size:19px; margin:10px 0; }
+    .topic p { font-size:14px; color:var(--muted); margin:0; }
+    footer { border-top:1px solid var(--line); padding:25px 0 30px; display:flex; justify-content:space-between; gap:20px; color:var(--muted); font-size:12px; }
+    @media(max-width:850px) { .hero { gap:30px; grid-template-columns:1.1fr .9fr; } .homework { grid-template-columns:50px 1fr; gap:20px; } .open { grid-column:2; justify-self:start; } .number { font-size:35px; } }
+    @media(max-width:620px) { .wrap { width:calc(100% - 36px); } header { flex-wrap:wrap; padding:19px 0; } nav { gap:20px; } .hero { grid-template-columns:1fr; gap:32px; padding:42px 0 36px; } h1 { letter-spacing:-2px; } .notebook { padding:23px; } .notebook-symbol { font-size:70px; margin:5px 0; } .summary { flex-wrap:wrap; gap:6px 20px; } .section { padding:42px 0; } .section-head { display:block; } .section-head p { margin-top:15px; } .homework { padding:22px 18px; grid-template-columns:36px 1fr; gap:14px; } h3 { font-size:21px; } .topic-grid { grid-template-columns:1fr; gap:24px; } footer { flex-wrap:wrap; } }
+    @media(prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } a.homework { transition:none; } }
+  </style>
+</head>
+<body id="top">
+  <a class="skip" href="#main">Skip to content</a>
+  <div class="wrap">
+    <header>
+      <a class="brand" href="./index.html" aria-label="Statistics homepage"><span class="brand-mark" aria-hidden="true">Σ</span> STATISTICS</a>
+      <nav aria-label="Main navigation"><a href="#homeworks">Homeworks</a></nav>
+    </header>
+    <main id="main">
+      <section class="hero" aria-labelledby="page-title">
+        <div>
+          <div class="eyebrow">The homework notebook</div>
+          <h1 id="page-title">Ideas. Experiments.<br>A little <em>statistics.</em></h1>
+          <p class="intro">A growing collection of interactive homeworks. Explore the mathematics, run the experiments, and connect statistical reasoning to cryptography.</p>
+          <a class="primary" href="#homeworks">Explore the homeworks <span aria-hidden="true">↘</span></a>
+        </div>
+        <aside class="notebook" aria-label="Notebook overview">
+          <div class="notebook-head"><span>STAT / NOTEBOOK</span><span><i class="status-dot" aria-hidden="true"></i>IN PROGRESS</span></div>
+          <div class="notebook-symbol" aria-hidden="true">P(X)</div>
+          <p>From mathematical ideas to observable behaviour.</p>
+          <div class="notebook-line"><span>01 / EXPLORE</span><span>Understand the model</span></div>
+          <div class="notebook-line"><span>02 / EXPERIMENT</span><span>Observe the outputs</span></div>
+          <div class="notebook-line"><span>03 / INTERPRET</span><span>Question the results</span></div>
+        </aside>
+      </section>
+      <div class="summary"><span><strong id="homework-count">2</strong> homeworks available</span><span>Interactive labs · Theory · Research</span><span>More chapters to come ↗</span></div>
+      <section class="section" id="homeworks" aria-labelledby="homework-title">
+        <div class="section-head"><div><div class="eyebrow">01 / The collection</div><h2 id="homework-title">Choose a homework.</h2></div><p>Each chapter opens its own page, with experiments and explanations.</p></div>
+        <div class="homeworks" id="homework-list"></div>
+        <noscript><p>Open <a href="./HW1.html">Homework 1 — Elliptic Curve Lab</a> or <a href="./HW2.html">Homework 2 — Wallet Lab</a>. Enable JavaScript to display the full collection.</p></noscript>
+      </section>
+    </main>
+    <footer><span>Statistics · Homework notebook</span><span>A collection that grows, one experiment at a time.</span><a href="#top">Back to top ↑</a></footer>
+  </div>
+  <script>
+    'use strict';
+    // ADD FUTURE HOMEWORKS HERE.
+    // Put index.html, HW1.html and HW2.html in the same GitHub folder.
+    // If a page is in a subfolder, use a path such as "homeworks/HW2.html".
+    // A null file displays a "Coming soon" card with no clickable link.
+    const homeworks = [
+      {
+        number: '01',
+        title: 'Elliptic Curve Lab',
+        description: 'Turn a private number into a public point. Explore a toy elliptic curve, inspect statistical behaviour, and connect the idea to Ethereum and other blockchains.',
+        tags: ['Q = kG', 'Public-key cryptography', 'Distributions'],
+        file: 'HW1.html'
+      },
+      {
+        number: '02',
+        title: 'Wallet Lab',
+        description: 'Follow the journey from a mnemonic phrase to an Ethereum address. Distinguish cryptographic primitives, test hash sensitivity, and examine address distributions.',
+        tags: ['BIP-39 / BIP-32', 'Keccak-256', 'Entropy & checksums'],
+        file: 'HW2.html'
+      }
+      // Add another object here for Homework 3, Homework 4, and so on.
+      // Remember to place a comma between objects.
+    ];
+
+    const list = document.getElementById('homework-list');
+    function element(tag, className, text) {
+      const node = document.createElement(tag);
+      if (className) node.className = className;
+      if (text !== undefined) node.textContent = text;
+      return node;
+    }
+    homeworks.forEach(homework => {
+      const ready = Boolean(homework.file);
+      const card = element(ready ? 'a' : 'article', 'homework' + (ready ? '' : ' pending'));
+      if (ready) {
+        card.setAttribute('href', './' + homework.file);
+        card.setAttribute('aria-label', 'Open Homework ' + Number(homework.number) + ': ' + homework.title);
+      }
+      const number = element('div', 'number', homework.number);
+      number.setAttribute('aria-hidden', 'true');
+      const content = element('div');
+      const meta = element('div', 'meta');
+      meta.append(element('span', '', 'Homework ' + homework.number), element('span', 'badge', ready ? 'Available' : 'Coming soon'));
+      content.append(meta, element('h3', '', homework.title), element('p', '', homework.description));
+      if (homework.tags.length) {
+        const tags = element('ul', 'tags');
+        homework.tags.forEach(tag => tags.append(element('li', '', tag)));
+        content.append(tags);
+      }
+      const action = element('div', 'open', ready ? 'Open homework' : 'In the making');
+      if (ready) {
+        const arrow = element('span', '', '↗');
+        arrow.setAttribute('aria-hidden', 'true');
+        action.append(arrow);
+      }
+      card.append(number, content, action);
+      list.append(card);
+    });
+    document.getElementById('homework-count').textContent = homeworks.filter(homework => homework.file).length;
+  </script>
+</body>
+</html>
