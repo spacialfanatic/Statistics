@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Homework 1 · Elliptic Curve Lab</title>
+<style>
+:root{--bg:#000;--ink:#19a497;--muted:#258f77;--green:#32b4a4;--line:#2d4054;--orange:#f08b68}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 system-ui,sans-serif}header{border-bottom:1px solid var(--line);padding:19px 5%;display:flex;align-items:center;justify-content:space-between;gap:20px}a{color:var(--green)}nav{display:flex;gap:24px;font-size:14px}nav a{text-decoration:none}main{max-width:1180px;margin:auto;padding:50px 24px}h1{font-size:clamp(40px,6vw,76px);line-height:1.04;letter-spacing:-3px;margin:20px 0}h2{font-size:30px;letter-spacing:-1px;margin:0 0 12px}h3{margin:0 0 12px;font-size:19px}p{margin:12px 0}small,.muted{color:var(--muted)}.eyebrow{text-transform:uppercase;font-size:12px;font-weight:750;letter-spacing:2px;color:var(--green)}.intro{max-width:700px;font-size:19px;color:var(--muted)}.hero{padding-bottom:48px}.tag{display:inline-block;border:1px solid var(--line);border-radius:30px;padding:5px 13px;font-size:12px;margin:10px 5px 0 0}.formula{font-family:ui-monospace,monospace}.notice{border-left:3px solid #068cc1;background:#000;padding:14px 20px;margin:24px 0;font-size:14px}.section{padding:40px 0;border-top:1px solid var(--line);scroll-margin-top:20px}.grid{display:grid;grid-template-columns:1.15fr 1fr;gap:22px}.card{background:#142235;border:1px solid var(--line);border-radius:16px;padding:26px;min-width:0}.dark{background:#1b3047;color:#69d6ca}.dark .muted{color:#a5c5cf}.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}label{font-size:14px;font-weight:650}input,select,button{font:inherit;border-radius:8px;border:1px solid #3c576b;padding:9px 13px}input[type=number]{width:95px}button{background:var(--green);color:white;border:none;cursor:pointer;font-weight:650}button.secondary{background:#263d53;color:#69d6ca}button:disabled{opacity:.45;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #c7712f;outline-offset:3px}.result{font-size:38px;letter-spacing:-1px;margin:8px 0}.steps{max-height:280px;overflow:auto;margin-top:16px}.steps li{padding:5px 10px;border-bottom:1px solid var(--line);font-family:ui-monospace,monospace;font-size:14px}.steps li.active{background:#254452;font-weight:bold}.steps li.future{opacity:.4}svg{display:block;width:100%;height:auto}.legend{display:flex;gap:16px;font-size:12px;flex-wrap:wrap}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:22px 0}.stat{background:#1e3349;border-radius:10px;padding:16px}.stat strong{display:block;font-size:27px}.tablewrap{overflow:auto}table{border-collapse:collapse;width:100%;font-size:14px}th,td{text-align:left;border-bottom:1px solid var(--line);padding:13px;vertical-align:top}th{font-size:12px;text-transform:uppercase;letter-spacing:1px}.bar-row{display:grid;grid-template-columns:24px 1fr 35px;gap:8px;align-items:center;font:12px ui-monospace,monospace}.bar{height:10px;background:var(--green);border-radius:2px;min-width:0}.bars{display:grid;gap:5px}details{border-top:1px solid var(--line);padding:17px 0}summary{cursor:pointer;font-weight:650}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#1e3349;padding:18px;border-radius:8px;font-size:13px}footer{padding:30px 0;color:var(--muted);font-size:13px}.error{color:var(--orange);min-height:24px;font-size:14px}.sources li{padding:5px 0}.wide{grid-column:1/-1}@media(max-width:760px){.grid{grid-template-columns:1fr}header{align-items:flex-start;flex-direction:column}nav{gap:16px}main{padding:32px 18px}h1{letter-spacing:-2px}.card{padding:19px}.stats{grid-template-columns:1fr}.result{font-size:32px}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* Dark slate surfaces complement the existing black and teal theme. */
+input,select{background:#101d2d;color:#84dfd3;color-scheme:dark}
+.card .muted,.card small{color:#9dbbc5}
+.card p,.card li,.card td,.card label{color:#91d2cc}
+.card th,.card h3,.stat strong{color:#74ded0}
+button{background:#087e65;color:#f4fffc}
+button.secondary:hover{background:#304f68}
+.steps li.active{color:#a2f0e4}
+pre{color:#b8d8e5}
+</style>
+</head>
+<body>
+<header><strong>EC / LAB <span class="muted">&nbsp; Statistics · Homework 01</span></strong><nav aria-label="Sections"><a href="#experiment">Experiment</a><a href="#statistics">Statistics</a><a href="#research">Research</a><a href="#method">Method</a></nav></header>
+<main>
+<section class="hero"><div class="eyebrow">Public-key cryptography / An interactive notebook</div><h1>A small curve.<br>A big cryptographic idea.</h1><p class="intro">Turn a private number into a public point. Explore elliptic-curve scalar multiplication, inspect its statistical behaviour, and connect the experiment to Ethereum.</p><div class="notice"><strong>Scalar multiplication is not a hash function.</strong> Q = kG is deterministic and efficiently computable. Reversing it is difficult on suitable real-world curves. </div></section>
+<section class="section" id="experiment"><div class="eyebrow">01 / The experiment</div><h2>Private key → public key</h2><p>Our curve is <span class="formula">y² ≡ x³ + 7 (mod 17)</span>, with base point <span class="formula">G = (1, 5)</span>. Since 5² ≡ 1³ + 7 ≡ 8 (mod 17), G lies on the curve.</p>
+<div class="grid"><div class="card"><h3>Choose a toy private key</h3><div class="row"><label for="key">k</label><input id="key" type="number" min="1" max="8" value="6"><button id="calculate">Calculate</button><button class="secondary" id="random">Random key</button></div><p class="muted"><small>Use 1–8: G has order 9. Thus 9G = O, the identity (point at infinity). The toy subgroup has composite order and is unsuitable for cryptography.</small></p><p id="error" class="error" role="alert"></p><div class="row"><button id="play">▶ Animate</button><button id="step" class="secondary">Next step</button><button id="reset" class="secondary">Reset</button><label for="speed">Delay</label><select id="speed"><option value="1200">1.2 s</option><option value="650" selected>0.65 s</option><option value="250">0.25 s</option></select></div><p id="status" aria-live="polite"></p><ol class="steps" id="steps" aria-label="Successive multiples of G"></ol></div>
+<div class="card"><svg id="curve" viewBox="0 0 450 405" role="img" aria-label="Finite-field plot of the curve with the current public point highlighted"></svg><div class="legend"><span><i class="dot" style="background:#7e97ad"></i>Curve points</span><span><i class="dot" style="background:#32b4a4"></i>Visited</span><span><i class="dot" style="background:#f08b68"></i>Current</span></div><p><small>These are discrete points, not a continuous real curve. The highlight follows repeated addition; geometric lines are not drawn across the modular grid.</small></p></div>
+<div class="card dark wide"><div class="eyebrow" style="color:#91d9bc">Toy public key</div><div class="result formula" id="result" aria-live="polite"></div><p class="muted" id="equation"></p></div></div></section>
+<section class="section" id="statistics"><div class="eyebrow">02 / Statistical investigation</div><h2>Scattered does not mean secure.</h2><p>The exact population contains 8 valid toy keys. Enumerating all of them gives 8 distinct finite public points. Random sampling below draws keys <strong>with replacement</strong> using the browser’s cryptographic random generator and unbiased byte reduction.</p><div class="stats"><div class="stat">Distinct public keys<strong>8 / 8</strong></div><div class="stat">Maximum key entropy<strong>3 bits</strong><small>log₂(8), for uniform keys</small></div><div class="stat">Brute-force search<strong>≤ 8 trials</strong></div></div>
+<div class="grid"><div class="card"><h3>Distribution of the x-coordinate</h3><div class="row"><button id="sample">Sample 1,000 keys</button><button class="secondary" id="population">Exact population</button></div><p id="sample-info" aria-live="polite"></p><div id="bars" class="bars" aria-label="X-coordinate frequency distribution"></div></div><div class="card"><h3>What should we conclude?</h3><p><strong>Determinism:</strong> the same k always gives the same Q.</p><p><strong>Uniform keys → uniform points:</strong> k ↦ kG is a bijection between 1–8 and the nonidentity points of the subgroup generated by G. Coordinates themselves are not uniform over 0–16: Q and −Q share x.</p><p><strong>No full-point collisions in this domain:</strong> collisions occur if unrestricted integers are allowed, because (k + 9)G = kG. Equal x-values alone are not equal public keys.</p><p id="chi"></p><p><strong>Statistical tests cannot prove security.</strong> A flat histogram neither establishes ECDLP hardness nor guarantees unpredictability.</p></div>
+<div class="card wide"><h3>One-bit sensitivity: a small, honest experiment</h3><p>Flip each of the 4 bits of every valid k; retain pairs where the changed key is also in 1–8 and count each unordered pair once. Encode Q as 5-bit x followed by 5-bit y, then measure Hamming distance. This is an encoding-dependent descriptive test, not evidence of a cryptographic hash’s avalanche property.</p><p id="avalanche" class="formula"></p><p class="muted">Adjacent keys also satisfy (k + 1)G = kG + G. Scalar multiplication has algebraic structure; it is not a random oracle.</p></div></div></section>
+<section class="section" id="research"><div class="eyebrow">03 / From toy curve to blockchains</div><h2>The same idea, at a different scale.</h2><p>Real secp256k1 uses y² = x³ + 7 over the prime field p = 2²⁵⁶ − 2³² − 977, a specified generator, and a large prime subgroup order n. Our modulus 17 and G = (1,5) are only a teaching analogue—not secp256k1. Generic discrete-log attacks on the real subgroup take roughly 2¹²⁸ group operations. <a href="#source1">[1]</a></p><div class="card"><h3>Ethereum’s externally owned accounts</h3><p class="formula">private scalar k → public point Q = kG → Keccak-256(x ∥ y) → last 20 bytes</p><p>The first arrow is elliptic-curve multiplication. The second is hashing. For address derivation, x and y are each 32 bytes; the 0x04 uncompressed-key prefix is excluded. Ethereum uses ECDSA signatures to authorize EOA transactions. The address is not the public key. This lab computes only a toy public point. <a href="#source2">[2]</a></p></div>
+<div class="tablewrap"><table><caption style="text-align:left;padding:20px 0;font-weight:650">Cryptography and statistical reasoning in three major blockchains</caption><thead><tr><th>Network</th><th>Cryptographic application</th><th>Statistical connection</th></tr></thead><tbody><tr><td><strong>Bitcoin</strong></td><td>secp256k1 signatures prove spending authorization. Taproot uses BIP 340 Schnorr signatures; proof of work uses hashing. <a href="#source3">[3]</a> <a href="#source4">[4]</a></td><td>Under an ideal-hash model, each mining attempt succeeds with probability (T + 1)/2²⁵⁶ for target T. Independent trials give a geometric waiting-time model; hash-rate concentration affects security assumptions.</td></tr><tr><td><strong>Ethereum</strong></td><td>EOA transaction signatures use secp256k1; addresses use Keccak-256. Validator keys use BLS on BLS12-381, a different curve. <a href="#source2">[2]</a> <a href="#source5">[5]</a></td><td>Key-generation bias reduces entropy and search cost. Random validator selection supports committee formation; concentration of stake matters when assessing adversarial participation. <a href="#source6">[6]</a></td></tr><tr><td><strong>Solana</strong></td><td>Ordinary keypair addresses are Ed25519 public keys. Program-derived addresses are a separate construction and have no corresponding private key. <a href="#source7">[7]</a></td><td>Key randomness must be assessed within the correct curve and encoding. This toy secp-style coordinate histogram does not directly describe Ed25519’s output distribution.</td></tr></tbody></table></div><p class="muted">Research takeaway: signatures establish authorization, hashes provide commitments and identifiers, and probability models help evaluate randomness and consensus assumptions. Those are distinct roles.</p></section>
+<section class="section" id="method"><div class="eyebrow">04 / Under the hood</div><h2>How point addition works</h2><p>All arithmetic is modulo 17. Division means multiplication by a modular inverse; it is not ordinary decimal division.</p><details open><summary>Formulas and exceptional cases</summary><pre>For P = (x₁,y₁), R = (x₂,y₂):
+P ≠ R: λ = (y₂ − y₁) · (x₂ − x₁)⁻¹ mod 17
+P = R: λ = 3x₁² · (2y₁)⁻¹ mod 17
+x₃ = λ² − x₁ − x₂ mod 17
+y₃ = λ(x₁ − x₃) − y₁ mod 17
+
+Identity: P + O = P
+Inverse points: (x,y) + (x,−y) = O
+Doubling a point with y = 0 also gives O.</pre></details><details><summary>Algorithm and computational cost</summary><p>The animation starts at O and repeatedly adds G, requiring k additions to display every multiple. The code also includes double-and-add, which computes kG in O(log k) group operations. JavaScript Number is sufficient for this tiny field, but cannot represent real secp256k1 integers exactly; real arithmetic needs BigInt or a vetted library.</p><pre id="code"></pre></details><details><summary>Experiment limitations</summary><p>The curve has 18 points including O; G generates a subgroup of 9 points (8 finite points and O). The keyspace is tiny and the order is composite. Key entropy is at most 3 bits, and enumerating the table recovers any toy private key. The statistical sample uses a sound random source, but that cannot make this group secure. Do not enter or generate real wallet secrets here.</p><p>The x-coordinate chi-square statistic uses the exact induced coordinate distribution, not a uniform 17-bin null hypothesis. Only positive-probability bins are included. It is reported descriptively without a p-value; repeated reruns and dependent projections are not security proofs.</p></details></section>
+<section class="section"><h2>References</h2><p class="muted">Primary documentation · consulted 12 October 2026</p><ol class="sources"><li id="source1"><a href="https://www.secg.org/sec2-v2.pdf">SECG — SEC 2 v2, §2.4.1: secp256k1 parameters</a></li><li id="source2"><a href="https://ethereum.org/en/developers/docs/accounts/">Ethereum — Accounts and key pairs</a></li><li id="source3"><a href="https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki">Bitcoin — BIP 340: Schnorr signatures for secp256k1</a></li><li id="source4"><a href="https://bitcoin.org/bitcoin.pdf">Satoshi Nakamoto — Bitcoin whitepaper, proof of work and probability analysis</a></li><li id="source5"><a href="https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/keys/">Ethereum — Proof-of-stake keys</a></li><li id="source6"><a href="https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/">Ethereum — Proof of stake and validator selection</a></li><li id="source7"><a href="https://solana.com/docs/core/accounts">Solana — Accounts</a></li></ol></section>
+<footer>Homework 01 · Elliptic Curve Lab · Educational implementation. View the page source to inspect all HTML, CSS and JavaScript.</footer>
+</main>
+<script>
+'use strict';
+// Toy arithmetic only. null represents the identity O (point at infinity).
+const P = 17, G = {x:1,y:5};
+const mod = n => ((n % P) + P) % P;
+function inverse(n) {
+  n = mod(n);
+  for (let i=1;i<P;i++) if (mod(n*i)===1) return i;
+  throw new Error('Zero has no modular inverse.');
+}
+function add(A,B) {
+  if (A===null) return B;
+  if (B===null) return A;
+  if (A.x===B.x && mod(A.y+B.y)===0) return null;
+  const doubling = A.x===B.x && A.y===B.y;
+  const slope = doubling ? mod(3*A.x*A.x*inverse(2*A.y)) : mod((B.y-A.y)*inverse(B.x-A.x));
+  const x = mod(slope*slope-A.x-B.x);
+  return {x,y:mod(slope*(A.x-x)-A.y)};
+}
+function multiply(k, point=G) {
+  let result=null, current=point;
+  while(k>0) {
+    if(k%2===1) result=add(result,current);
+    current=add(current,current);
+    k=Math.floor(k/2);
+  }
+  return result;
+}
+const fmt = q => q===null?'O':`(${q.x}, ${q.y})`;
+const curve=[];
+for(let x=0;x<P;x++) for(let y=0;y<P;y++) if(mod(y*y-x*x*x-7)===0) curve.push({x,y});
+const multiples=[null];
+for(let i=1;i<=18;i++) multiples.push(add(multiples[i-1],G));
+const $=id=>document.getElementById(id);
+let target=6, position=6, timer=null;
+function stop(){clearTimeout(timer);timer=null;$('play').textContent='▶ Animate';}
+function draw(){
+  const cx=x=>43+x*22,cy=y=>367-y*21;
+  let s='<title>Toy curve over F17</title><desc>All 17 finite points. Orange marks the current multiple of G.</desc>';
+  for(let i=0;i<17;i++){
+    s+=`<path d="M ${cx(i)} 31 V 367 M 43 ${cy(i)} H 395" fill="none" stroke="#2d4054"/>`;
+    s+=`<text x="${cx(i)}" y="387" text-anchor="middle" font-size="10" fill="#9ab3c5">${i}</text><text x="30" y="${cy(i)+4}" text-anchor="end" font-size="10" fill="#9ab3c5">${i}</text>`;
+  }
+  s+='<text x="416" y="383" font-size="12">x</text><text x="22" y="20" font-size="12">y</text>';
+  const current=multiples[position];
+  curve.forEach(q=>{
+    const active=current && q.x===current.x&&q.y===current.y;
+    const visited=multiples.slice(1,position+1).some(r=>r&&r.x===q.x&&r.y===q.y);
+    s+=`<circle cx="${cx(q.x)}" cy="${cy(q.y)}" r="${active?8:5}" fill="${active?'#f08b68':visited?'#32b4a4':'#7e97ad'}"><title>${fmt(q)}${active?' — current':''}</title></circle>`;
+    if(active) s+=`<circle cx="${cx(q.x)}" cy="${cy(q.y)}" r="12" fill="none" stroke="#f08b68"/>`;
+  });
+  $('curve').innerHTML=s;
+}
+function render(){
+  $('steps').innerHTML=Array.from({length:target},(_,i)=>`<li class="${i+1===position?'active':i+1>position?'future':''}">${i+1}G = ${fmt(multiples[i+1])}</li>`).join('');
+  $('status').textContent=position===0?'Start: accumulator = O. Next, add G.':`Step ${position} of ${target}: ${fmt(multiples[position-1])} + G = ${fmt(multiples[position])}`;
+  $('result').textContent=position===target?`Q = ${target}G = ${fmt(multiples[target])}`:`${position}G = ${fmt(multiples[position])}`;
+  $('equation').textContent=position===target?'Final toy public key. The same input always produces this point.':'Computation in progress — add G to advance toward the public key.';
+  $('step').disabled=position>=target;
+  draw();
+}
+function readKey(){const raw=$('key').value;const k=Number(raw);if(raw.trim()===''||!Number.isInteger(k)||k<1||k>8){$('error').textContent='Enter an integer from 1 to 8.';return null;}$('error').textContent='';return k;}
+function calculate(){const k=readKey();if(k===null)return;stop();target=k;position=k;render();}
+$('calculate').onclick=calculate;
+$('key').onchange=calculate;
+$('reset').onclick=()=>{stop();position=0;render();};
+$('step').onclick=()=>{stop();position=Math.min(position+1,target);render();};
+$('play').onclick=()=>{
+  if(timer!==null){stop();return;}
+  const k=readKey();if(k===null)return;
+  if(k!==target||position>=target){target=k;position=0;}
+  render();$('play').textContent='Ⅱ Pause';
+  function tick(){position++;render();if(position<target)timer=setTimeout(tick,Number($('speed').value));else stop();}
+  timer=setTimeout(tick,Number($('speed').value));
+};
+// Rejection sampling avoids modulo bias: accept all 256 byte values, divisible by 8.
+function randomKey(){const b=new Uint8Array(1);crypto.getRandomValues(b);return 1+b[0]%8;}
+$('random').onclick=()=>{try{$('key').value=randomKey();calculate();}catch(e){$('error').textContent='Secure random generation is unavailable in this browser.';}};
+const exact=Array(17).fill(0);multiples.slice(1,9).forEach(q=>exact[q.x]++);
+function distribution(sample=false){
+  const counts=Array(17).fill(0),n=sample?1000:8;
+  if(sample){try{for(let i=0;i<n;i++)counts[multiples[randomKey()].x]++;}catch(e){$('sample-info').textContent='Secure randomness unavailable.';return;}}
+  else exact.forEach((v,i)=>counts[i]=v);
+  const maximum=Math.max(...counts);
+  $('bars').innerHTML=counts.map((v,i)=>`<div class="bar-row"><span>${i}</span><span><span class="bar" style="display:block;width:${100*v/maximum}%"></span></span><span>${v}</span></div>`).join('');
+  $('sample-info').textContent=sample?'1,000 independent key draws; bars show observed x counts.':'Exact enumeration of k = 1…8; bars show counts at each x.';
+  let chi=0;for(let i=0;i<17;i++)if(exact[i]){const e=n*exact[i]/8;chi+=(counts[i]-e)**2/e;}
+  $('chi').textContent=sample?`Coordinate χ² = ${chi.toFixed(3)} across ${exact.filter(Boolean).length} supported bins (expected count = 1,000 × exact probability). Descriptive only; no p-value is computed.`:'Run the sample to compare observed counts with the exact, nonuniform coordinate distribution.';
+}
+$('sample').onclick=()=>distribution(true);$('population').onclick=()=>distribution(false);
+const binary=q=>q.x.toString(2).padStart(5,'0')+q.y.toString(2).padStart(5,'0');
+const distances=[];
+for(let k=1;k<=8;k++)for(let bit=0;bit<4;bit++){const j=k^(1<<bit);if(j>k&&j<=8){const a=binary(multiples[k]),b=binary(multiples[j]);distances.push([...a].filter((v,i)=>v!==b[i]).length);}}
+const mean=distances.reduce((a,b)=>a+b,0)/distances.length;
+$('avalanche').textContent=`${distances.length} valid key pairs · Mean changed bits: ${mean.toFixed(3)} / 10 (${(mean*10).toFixed(1)}%) · Range: ${Math.min(...distances)}–${Math.max(...distances)} bits`;
+$('code').textContent=multiply.toString();
+render();distribution();
+</script>
+</body></html>
