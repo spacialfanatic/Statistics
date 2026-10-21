@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="An interactive homework on secp256k1 hybrid encryption, the Caesar cipher, statistical cryptanalysis and restricted-key attacks.">
+<title>Homework 3 · Small Keys, Big Weaknesses</title>
+<style>
+:root{color-scheme:dark;--bg:#000000;--panel:#142235;--panel2:#1b3047;--line:#2d4054;--ink:#91d2cc;--muted:#9dbbc5;--teal:#74ded0;--blue:#72bfff;--warm:#ffbe88;--red:#ff9999;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:100px}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 system-ui,-apple-system,sans-serif}a{color:var(--blue);text-underline-offset:4px}header{position:sticky;top:0;z-index:4;background:#000000f5;border-bottom:1px solid var(--line)}.top{max-width:1240px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:15px 26px}.brand{font-size:13px;font-weight:800;letter-spacing:1px;color:var(--teal)}nav{display:flex;gap:22px;flex-wrap:wrap}nav a{font-size:12px;letter-spacing:.5px;text-decoration:none;color:var(--muted)}nav a:hover{color:var(--teal)}main{max-width:1180px;margin:auto;padding:0 26px}.hero{padding:74px 0 52px;position:relative}.eyebrow{font:700 11px/1.5 var(--mono);letter-spacing:2px;text-transform:uppercase;color:var(--teal)}h1{font-size:clamp(43px,7vw,86px);line-height:1.04;letter-spacing:-4px;margin:22px 0 24px;max-width:900px;font-weight:650}h1 em{font-style:normal;color:var(--teal)}.lead{color:var(--muted);max-width:730px;font-size:19px}.hero-bottom{display:flex;align-items:center;gap:26px;flex-wrap:wrap;margin-top:32px}.pill{border:1px solid var(--line);border-radius:40px;padding:6px 13px;font:11px var(--mono);color:var(--muted)}.section{padding:46px 0 52px;border-top:1px solid var(--line)}h2{font-size:clamp(28px,4vw,39px);line-height:1.2;letter-spacing:-1px;margin:10px 0 16px}h3{font-size:19px;line-height:1.4;margin:0 0 12px}h4{margin:20px 0 8px;color:var(--teal)}p{margin:12px 0}.muted,small{color:var(--muted)}small{font-size:12px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:24px;min-width:0}.wide{grid-column:1/-1}.accent{background:linear-gradient(125deg,#12312f,#122332);border-color:#32665e}.note{border-left:3px solid var(--teal);padding:12px 18px;background:#10221f;margin:23px 0;font-size:14px}.warm{border-color:var(--warm);background:#251e17}.steps{padding-left:23px}.steps li{padding:5px 0}.mono,code,pre{font-family:var(--mono)}code{font-size:.88em;color:#a4dfec;overflow-wrap:anywhere}pre{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;background:#0a141f;border:1px solid var(--line);border-radius:9px;padding:17px;font-size:12px;line-height:1.7;margin:12px 0}.row{display:flex;align-items:center;flex-wrap:wrap;gap:12px}.spread{justify-content:space-between}.fields{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin:16px 0}label{display:block;font-size:13px;font-weight:650;margin-bottom:6px}input,textarea,select,button{font:inherit;border-radius:7px}input,textarea,select{width:100%;background:#08131d;border:1px solid #385263;color:var(--ink);padding:10px 12px}textarea{resize:vertical;line-height:1.6;font-size:14px;min-height:108px}button{border:1px solid transparent;background:var(--teal);color:#06221d;padding:10px 17px;font-weight:750;font-size:13px;cursor:pointer}button:hover{filter:brightness(1.1)}button.secondary{background:#1b3446;color:#c2e6ec;border-color:#3b596a}button:disabled{opacity:.45;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid var(--warm);outline-offset:4px}.status{font-size:13px;color:var(--teal);min-height:23px;margin-top:10px}.error{color:var(--red)}.output{white-space:pre-wrap;overflow-wrap:anywhere;background:#0a141f;border:1px solid var(--line);border-radius:8px;padding:15px;min-height:65px;font-size:14px}.key{color:var(--teal);font-family:var(--mono);font-size:35px;letter-spacing:-1px}.metric-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:24px 0}.metric{border-top:1px solid var(--line);padding-top:15px}.metric strong{display:block;font:500 27px/1.3 var(--mono);color:var(--teal)}.metric small{font-size:11px}.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;font-size:13px;text-align:left}th,td{padding:12px 13px;border-bottom:1px solid var(--line);vertical-align:top}th{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}caption{text-align:left;margin:14px 0;color:var(--muted);font-size:12px}.best{background:#153b34}.rank-table{max-height:350px;overflow:auto}.rank-table th{position:sticky;top:0;background:#10202b}.rank-table td:last-child{min-width:230px}.legend{display:flex;gap:20px;flex-wrap:wrap;font-size:12px;color:var(--muted)}.legend i{width:9px;height:9px;display:inline-block;border-radius:2px;margin-right:6px}.chart{min-height:205px;display:flex;align-items:flex-end;gap:3px;padding:22px 0 26px;border-bottom:1px solid var(--line);margin:12px 0 5px}.column{height:150px;flex:1;position:relative;display:flex;align-items:flex-end;gap:1px;min-width:0}.column span{width:50%;min-height:0;border-radius:2px 2px 0 0}.column b{position:absolute;bottom:-24px;left:0;width:100%;text-align:center;font:10px var(--mono);color:var(--muted)}.corpus{max-height:240px;min-height:175px;font-size:12px}.successbar{display:inline-block;width:90px;height:5px;background:#243a49;border-radius:5px;margin-right:7px;vertical-align:middle}.successbar i{display:block;background:var(--teal);height:100%;border-radius:5px}details{border-top:1px solid var(--line);padding:17px 0}summary{cursor:pointer;color:#bce0e6;font-size:14px;font-weight:650}progress{width:100%;height:8px;accent-color:var(--teal);display:block;margin:18px 0 8px}.number{color:var(--warm);font-family:var(--mono);font-size:12px}.twocol{columns:2;column-gap:35px}.references li{margin:10px 0;font-size:13px}footer{border-top:1px solid var(--line);padding:26px 0 45px;color:var(--muted);font-size:12px}.tag{font:11px var(--mono);color:var(--warm)}@media(max-width:780px){.grid{grid-template-columns:1fr}.top{align-items:flex-start;flex-direction:column;gap:9px;padding:12px 18px}nav{gap:16px}main{padding:0 18px}.hero{padding-top:44px}h1{letter-spacing:-2.4px}.card{padding:19px}.fields{grid-template-columns:1fr 1fr}.fields>div:last-child{grid-column:1/-1}.metric-grid{grid-template-columns:1fr}.twocol{columns:1}.chart{gap:2px}.column b{font-size:8px}html{scroll-padding-top:125px}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}@media print{header,button{display:none}body{background:white;color:#142633}.card,pre,.output{background:#f1f5f6;color:#142633}.section{break-inside:avoid}.muted,small{color:#456}h1 em,h2,h3,.eyebrow{color:#096b63}}
+</style>
+</head>
+<body>
+<header><div class="top"><div class="brand">EC / LAB <span class="muted">&nbsp;·&nbsp; HOMEWORK 03</span></div><nav aria-label="Sections"><a href="#encryption">Encrypt</a><a href="#caesar-attack">Analyse</a><a href="#benchmark">Test</a><a href="#ecc-attack">Break</a><a href="#comparison">Compare</a><a href="#method">Source & theory</a></nav></div></header>
+<main>
+<section class="hero"><div class="eyebrow">Cryptography × statistics / Interactive homework</div><h1>Small keys.<br><em>Big weaknesses.</em></h1><p class="lead">One message. Two ways to hide it. Recover a Caesar shift through language statistics, then break a deliberately restricted elliptic-curve key.</p><div class="hero-bottom"><a href="#encryption">Start the experiment ↘</a><span class="pill">ONE HTML FILE</span><span class="pill">NO EXTERNAL LIBRARIES</span><span class="pill">RUNS IN YOUR BROWSER</span></div>
+<div class="note warm"><strong>Connection to the previous homework.</strong> That file illustrated Q = dG using y² = x³ + 7 modulo 17 and G = (1,5), a small analogue of secp256k1. Here we keep the same point-addition idea but use the <strong>actual secp256k1 field and generator</strong>, restricting only the recipient’s private key to 1–N. Scalar multiplication alone is key generation, not message encryption; we add an explicitly defined hybrid construction.</div></section>
+<section class="section" id="encryption"><div class="eyebrow">01 / Encrypt & decrypt</div><h2>The same message, two different mechanisms.</h2><p class="muted">Caesar shifts letters directly. The elliptic-curve construction establishes a shared secret, derives a symmetric key, and encrypts the UTF-8 message with AES-GCM.</p>
+<div class="card accent"><label for="message">Your plaintext message</label><textarea id="message" maxlength="20000">Meet me at the library after the lecture. We will compare the results of our cryptography experiments and discuss how the distribution of letters reveals the secret shift.</textarea><div class="fields"><div><label for="shift">Caesar shift s (0–25)</label><input id="shift" type="number" min="0" max="25" step="1" value="7"></div><div><label for="bound">Toy ECC key range: 1–N</label><select id="bound"><option value="256">N = 256 · 8 bits</option><option value="1024">N = 1,024 · 10 bits</option><option value="4096" selected>N = 4,096 · 12 bits</option><option value="16384">N = 16,384 · 14 bits</option></select></div><div><label for="private">Recipient private key d</label><input id="private" type="number" min="1" max="4096" step="1" value="1372"></div></div><div class="row"><button id="encrypt">Encrypt with both schemes</button><button id="random-key" class="secondary">Random toy key</button></div><p id="encrypt-status" class="status" role="status"></p><small>No data is sent anywhere. ECC encryption requires browser Web Crypto: use a modern browser opening this file directly, or serve it over HTTPS / localhost. Caesar and its analysis work without Web Crypto.</small></div>
+<div class="grid" style="margin-top:20px"><article class="card"><div class="row spread"><h3>Caesar cipher</h3><span class="tag">SYMMETRIC</span></div><label for="caesar-output">Ciphertext</label><div id="caesar-output" class="output"></div><p><code>c = (m + s) mod 26</code><br><code>m = (c − s + 26) mod 26</code></p><button id="caesar-decrypt" class="secondary" disabled>Decrypt using s</button><p class="muted">Recovered plaintext</p><div id="caesar-plain" class="output">Encrypt a message first.</div><small>ASCII A–Z and a–z are shifted, preserving case. Spaces, punctuation, accented characters and other Unicode characters remain unchanged. Both parties need the same secret shift.</small></article>
+<article class="card"><div class="row spread"><h3>secp256k1 hybrid</h3><span class="tag">PUBLIC-KEY + SYMMETRIC</span></div><label for="packet">Public encryption packet · editable JSON</label><textarea id="packet" class="mono" spellcheck="false" style="font-size:11px;min-height:190px" aria-describedby="packet-help"></textarea><small id="packet-help">Contains Q, R, salt, IV, and ciphertext with a 128-bit authentication tag. No private scalar or derived AES key is included.</small><div class="row" style="margin-top:15px"><div style="flex:1;min-width:130px"><label for="decrypt-key">Private key for decryption</label><input id="decrypt-key" type="number" min="1" step="1" value="1372"></div><button id="ecc-decrypt" class="secondary" disabled>Decrypt using d</button></div><p id="decrypt-status" class="status" role="status"></p><div id="ecc-plain" class="output">Encrypt a message first.</div></article></div>
+<details><summary>Follow the algorithm and the role of each key</summary><ol class="steps"><li><strong>Recipient key generation:</strong> choose a secret d uniformly from 1–N; compute public Q = dG. For real deployments, choose d from 1–n−1 with a cryptographic random generator.</li><li><strong>Sender’s fresh key:</strong> choose a new random r from 1–n−1 for every encryption and publish R = rG. The sender only needs the recipient’s public Q.</li><li><strong>Shared secret:</strong> sender computes S = rQ. Recipient computes S′ = dR. They agree because r(dG) = d(rG). Neither d nor r is sent.</li><li><strong>Key derivation:</strong> feed the 32-byte, big-endian x-coordinate of S to HKDF-SHA-256 with a fresh 16-byte salt. The context includes the protocol label and encodings of R and Q. Derive a 256-bit AES key K.</li><li><strong>Encrypt:</strong> AES-256-GCM encrypts the UTF-8 message with K and a random 12-byte IV. The context is also authenticated as additional data. Send Q, R, salt, IV, ciphertext and tag.</li><li><strong>Decrypt:</strong> validate the public points, confirm Q = dG, recompute dR and K, then authenticate and decrypt. An altered packet or wrong key is rejected.</li></ol><p>This is a teaching hybrid inspired by ECIES, with an explicitly chosen HKDF / AES-GCM format; it is not a claim of compatibility with a particular ECIES standard. AES provides message encryption; ECC provides key agreement. Neither key generation nor hashing alone encrypts a message.</p></details>
+</section>
+<section class="section" id="caesar-attack"><div class="eyebrow">02 / Statistical cryptanalysis</div><h2>Read the language behind the shift.</h2><p>Try all 26 shifts and rank the candidate plaintexts against a language model learned from a corpus. The attacker receives only the ciphertext and the model. The secret shift is not used for ranking.</p>
+<div class="grid"><div class="card"><label for="attack-text">Caesar ciphertext to analyse</label><textarea id="attack-text" maxlength="30000" spellcheck="false"></textarea><div class="row" style="margin:14px 0"><button id="analyse">Recover the shift</button><button id="use-cipher" class="secondary">Use encrypted message</button></div><label for="scorer">Ranking method</label><select id="scorer"><option value="chi">Letter frequencies · χ² (smaller is better)</option><option value="bigram">Bigram cross-entropy (smaller is better)</option></select><p id="analysis-status" class="status" role="status"></p><div class="row spread"><div><small>Best candidate shift</small><div id="guess" class="key">—</div></div><div><small>Score gap to runner-up</small><div id="score-gap" class="key" style="font-size:24px">—</div></div></div><div id="guess-plain" class="output"></div><small>A top-ranked candidate is a hypothesis, not a guaranteed recovery. A score gap is not a probability or confidence level. Very short or nonrepresentative texts can give the wrong key.</small></div>
+<div class="card"><h3>Letter distributions</h3><div class="legend"><span><i style="background:var(--teal)"></i>Best candidate</span><span><i style="background:var(--blue)"></i>Training corpus</span></div><div id="letter-chart" class="chart" role="img" aria-label="Letter frequency comparison"></div><p id="distribution-stats" class="muted" style="font-size:13px"></p><details><summary>Exact letter frequencies</summary><div id="frequency-table" class="tablewrap"></div></details><p class="muted" style="font-size:13px">A Caesar shift permutes the histogram’s labels. Sorted counts, empirical entropy, index of coincidence, repeated-letter patterns and word lengths survive unchanged.</p></div>
+<div class="card wide"><h3>All 26 candidates · exhaustive search with statistical ranking</h3><div class="rank-table"><table><thead><tr><th>Rank</th><th>Shift</th><th>Score ↓</th><th>Candidate plaintext</th></tr></thead><tbody id="rankings"></tbody></table></div><p class="muted" style="font-size:13px">Exhaustive search finds every possible decryption; scoring decides which looks most plausible. A human can also inspect all candidates. There are 26 keys including the identity shift 0 (25 if it is excluded).</p></div></div>
+<details><summary>The statistical model, equations and pseudocode</summary><p>Convert the training corpus to uppercase A–Z, discarding all other characters. For this analysis, accented letters are excluded rather than transliterated. If Cᵢ is the corpus count of letter i and L is the total, use Laplace smoothing: <code>pᵢ = (Cᵢ + 1) / (L + 26)</code>. Smoothing prevents zero expected counts.</p><pre>For each candidate shift s = 0, 1, ..., 25:
+    candidate = CaesarDecrypt(ciphertext, s)
+    O[i] = number of occurrences of letter i in candidate
+    M = number of A–Z letters in candidate
+    expected[i] = M * p[i]
+    chi_squared[s] = sum((O[i] - expected[i])² / expected[i])
+Return the shift with the smallest score (ties: smallest shift).</pre><p>The optional bigram model counts adjacent letters in the letter-only corpus, including across removed word boundaries. With α = 0.2, <code>P(b|a) = (Cₐᵦ + α) / (Σⱼ Cₐⱼ + 26α)</code>. It scores the first letter with pᵢ and subsequent letters by conditional probability; the reported score is negative log₂ likelihood divided by the number of letters (bits per letter). Lower is better. It uses order, which unigram frequencies ignore.</p><p>The χ² value is a ranking heuristic here. On short texts, expected counts are often too small for an asymptotic goodness-of-fit test. No p-value is computed. Both methods cost O(26M) for a text of M letters; 26 is constant.</p></details>
+<details><summary>Inspect or replace the training corpus</summary><p>Default: original English instructional prose, embedded in this file. It is a small demonstration corpus, not a balanced linguistic reference. For better estimates, paste a substantially larger representative corpus of the known language. Both models are retrained from this text. For a different language, also replace the independent test text below.</p><label for="corpus">Training corpus · A–Z analysis</label><textarea id="corpus" class="corpus" maxlength="500000" spellcheck="false"></textarea><div class="row" style="margin-top:12px"><button id="train">Train both models</button><button id="reset-corpus" class="secondary">Restore English example</button></div><p id="corpus-status" class="status" role="status"></p></details>
+</section>
+<section class="section" id="benchmark"><div class="eyebrow">03 / Controlled experiment</div><h2>How much ciphertext is enough?</h2><p>Test both scoring methods on 100 ciphertexts per length. Each trial chooses a contiguous window of the independent test text and a shift in 0–25. Success means the top-ranked shift equals the actual shift.</p>
+<div class="card"><div class="row spread"><div><h3>Recovery rate vs. text length</h3><p class="muted" style="font-size:13px">Lengths count letters, not spaces or bytes. Reproducible seed: 20261019.</p></div><div class="row"><button id="benchmark-run">Run 600 trials</button><button id="export" class="secondary" disabled>Download trial CSV</button></div></div><div class="tablewrap"><table><thead><tr><th>Letters</th><th>Trials</th><th>Frequency χ² recovery</th><th>Bigram recovery</th><th>χ² mean true-key rank</th></tr></thead><tbody id="benchmark-rows"><tr><td colspan="5">Run the experiment to generate measurements.</td></tr></tbody></table></div><p id="benchmark-status" class="status" role="status"></p><div id="benchmark-discussion" class="muted" style="font-size:14px"></div></div>
+<details><summary>Experimental design, test text and limitations</summary><p>The six lengths are 10, 25, 50, 100, 250 and 500 letters. A fixed pseudorandom generator selects offsets and encryption keys for reproducibility; it is used only for the benchmark, never for ECC key generation. The plaintext corpus used for model training is separate from this test text. The attacker does not see the true shift while scoring. Both scorers receive identical ciphertexts.</p><p>Windows can overlap and all come from one small source. These trials therefore do not establish independent, population-wide success probabilities. Larger samples usually stabilize letter proportions, but recovery need not improve monotonically for every text. Names, code, poetry, repeated letters, unusual vocabulary, wrong-language models and distribution mismatch can all defeat the ranking. A bigram model may help when language patterns match, but can overfit a small corpus.</p><label for="test-corpus">Independent test text · editable</label><textarea id="test-corpus" class="corpus" maxlength="500000" spellcheck="false"></textarea><small>At least 500 A–Z letters are required. Replace this text to test another genre or language. Changing either corpus marks previous measurements as stale; retrain before running if you changed the training corpus.</small></details>
+</section>
+<section class="section" id="ecc-attack"><div class="eyebrow">04 / Attack the restricted ECC key</div><h2>A 256-bit curve cannot rescue a 12-bit secret.</h2><p>The attacker knows the recipient’s public Q and that <code>1 ≤ d ≤ N</code>. Enumerate candidate multiples of G until a full point matches Q. This attack needs no language statistics and no guessed plaintext.</p>
+<div class="grid"><div class="card accent"><h3>Search the key space</h3><label for="attack-bound">Attacker’s upper bound N</label><select id="attack-bound"><option value="256">256</option><option value="1024">1,024</option><option value="4096" selected>4,096</option><option value="16384">16,384</option></select><div class="row" style="margin-top:16px"><button id="attack-ecc" disabled>Recover d & decrypt</button><button id="cancel-ecc" class="secondary" disabled>Stop search</button></div><progress id="attack-progress" value="0" max="4096" aria-label="ECC key search progress"></progress><p id="attack-status" class="status" role="status">Encrypt a message to create a target.</p><div class="row spread"><div><small>Recovered private key</small><div id="recovered-key" class="key">—</div></div><div><small>Candidate checks</small><div id="checks" class="key" style="font-size:25px">0</div></div></div><label for="attack-plain">Attacker’s recovered message</label><div id="attack-plain" class="output">The attack reads the public packet, never the private-key input.</div></div>
+<div class="card"><h3>Why this works</h3><pre>T = G
+for candidate = 1 to N:
+    if T == Q:          // compare x AND y
+        d = candidate
+        S = dR
+        K = HKDF(x(S), salt, context)
+        return AES_GCM_decrypt(K, packet)
+    T = T + G</pre><p>Incremental enumeration uses at most N point comparisons and N−1 additions, O(N) time and O(1) auxiliary search memory. It avoids recomputing every multiple from scratch. For uniformly distributed d, the expected number of candidate checks is (N + 1)/2.</p><p>A match is exact because multiplication by G is injective on 1–N when N &lt; n. Matching only x would also accept the negative point; this implementation compares both coordinates.</p><p class="muted">The bound is attacker knowledge. Set it below d to observe “not found.” A fresh random sender key r and a 256-bit AES key do not expand the recipient’s tiny secret space.</p></div></div>
+<div class="metric-grid"><div class="metric"><small>CAESAR KEY SPACE</small><strong>26 ≈ 2⁴·⁷⁰</strong><small>All keys can be tested.</small></div><div class="metric"><small>DEFAULT TOY ECC KEY SPACE</small><strong>4,096 = 2¹²</strong><small>Only 12 bits of entropy, at best.</small></div><div class="metric"><small>FULL SECP256K1 PRIVATE DOMAIN</small><strong>n − 1 ≈ 2²⁵⁶</strong><small>Generic classical discrete log: roughly 2¹²⁸ operations.</small></div></div>
+<details><summary>Alternative attacks and design weaknesses</summary><p><strong>Baby-step giant-step:</strong> solve the bounded discrete log in O(√N) time and O(√N) memory by tabulating small multiples and matching giant steps. Pollard’s kangaroo also exploits a known interval with roughly O(√N) work and low memory. An interval containing 4,096 candidates is tiny even before considering these improvements.</p><p><strong>Full-size keys:</strong> enumerating approximately 2²⁵⁶ candidates is infeasible. Generic classical algorithms such as Pollard rho improve this to approximately √n ≈ 2¹²⁸ group operations, still infeasible at conventional scales. A 256-bit private scalar does not mean 256-bit resistance to generic discrete-log attacks.</p><p><strong>What belongs to the restricted range?</strong> Direct private-key enumeration and bounded discrete-log attacks exploit low key entropy. They do not demonstrate a flaw in the secp256k1 curve. Nonuniform or predictable full-size scalars can also reduce effective entropy.</p><p><strong>What belongs to the construction or implementation?</strong> A raw shared coordinate is not a suitable general-purpose message cipher. Reusing an AES-GCM key/IV pair can be catastrophic; poor randomness, omitted point validation, missing integrity protection and side-channel leakage introduce separate weaknesses. This page uses fresh randomness, validates finite on-curve points, derives keys and authenticates ciphertext, but its handwritten BigInt arithmetic is variable-time and unaudited. It is an educational implementation, not production cryptography.</p><p><strong>Authentication boundary:</strong> a valid GCM tag detects tampering under the derived key; it does not identify the sender. Anyone knowing Q can create a valid new encryption. Public keys must be authenticated out of band to avoid substitution attacks. The page makes no sender-signature claim and does not provide forward secrecy against later compromise of the recipient’s static d.</p></details>
+</section>
+<section class="section" id="comparison"><div class="eyebrow">05 / Compare the schemes</div><h2>Different leaks. Different attacks.</h2><div class="tablewrap"><table><thead><tr><th>Property</th><th>Caesar cipher</th><th>This secp256k1 hybrid</th></tr></thead><tbody>
+<tr><td>Key roles</td><td>One shared secret shift s for encryption and decryption.</td><td>Public Q encrypts; private d enables decryption. Fresh ephemeral r creates a shared secret. AES uses a derived symmetric K.</td></tr>
+<tr><td>Encryption / decryption</td><td>Add / subtract s modulo 26, independently for each ASCII letter.</td><td>Compute rQ / dR, derive K with HKDF, then run AES-GCM encryption / authenticated decryption.</td></tr>
+<tr><td>Key space</td><td>26 shifts including 0. Uniform entropy log₂26 ≈ 4.70 bits.</td><td>Recipient d has N possible values, at most log₂N bits. Proper secp256k1 scalars have n−1 possible values.</td></tr>
+<tr><td>Repeated encryption</td><td>Same message and s always produce the same ciphertext.</td><td>Fresh r, salt and IV make repeated encryptions differ with overwhelming probability.</td></tr>
+<tr><td>Statistical properties</td><td>Letter counts are relabelled. Empirical letter entropy and index of coincidence are preserved exactly; spaces and punctuation leak.</td><td>Randomized byte ciphertext obscures direct language frequencies when the construction and keys are sound. Length still leaks. Tiny d makes recovery easy despite a noisy-looking ciphertext.</td></tr>
+<tr><td>Integrity</td><td>None: edits silently change the recovered message.</td><td>AES-GCM verifies a tag before accepting plaintext. This does not authenticate the sender’s identity.</td></tr>
+<tr><td>Attack demonstrated</td><td>Enumerate shifts and rank with corpus statistics. More representative text generally helps identify the key.</td><td>Enumerate d and compare exact public points. Recovery depends on N and d’s position, not plaintext language or length.</td></tr>
+<tr><td>What they share</td><td colspan="2">Deterministic arithmetic inside the algorithms; correctness requires agreed parameters and key material. Both become easy to attack with a very small key space. Attractive ciphertext histograms cannot establish security.</td></tr>
+</tbody></table></div><div class="note"><strong>Main conclusion.</strong> Caesar leaks the structure of the message itself. The restricted ECC example leaks an efficiently checkable key hypothesis through its public key. Statistics helps select a Caesar plaintext; exact group equality certifies the bounded ECC key.</div>
+</section>
+<section class="section" id="method"><div class="eyebrow">06 / Implementation notes & sources</div><h2>Open the hood.</h2><details><summary>Actual curve parameters and point arithmetic</summary><p>The curve is <code>y² ≡ x³ + 7 (mod p)</code>, a = 0, b = 7, cofactor h = 1. The public points are encoded as uncompressed SEC 1 points: 04 || x || y, with 32 bytes per coordinate. Integers are stored as JavaScript BigInt; ordinary Number cannot represent these values exactly.</p><pre id="parameters"></pre><p>For distinct points, λ = (y₂−y₁)(x₂−x₁)⁻¹ mod p. For doubling, λ = 3x₁²(2y₁)⁻¹ mod p. Then x₃ = λ²−x₁−x₂ mod p and y₃ = λ(x₁−x₃)−y₁ mod p. Inverse points sum to the identity O; O is represented by null. Double-and-add needs O(log d) group operations to compute dG.</p><p>Point decoding checks finite coordinates in [0,p−1] and the curve equation. On this specific cofactor-one, prime-order curve, a finite on-curve point is in the intended subgroup. This reasoning does not transfer automatically to arbitrary curves.</p></details>
+<details><summary>Measured entropy and index of coincidence</summary><p>For observed letter proportions fᵢ, empirical entropy is <code>H = −Σ fᵢ log₂ fᵢ</code>. The index of coincidence is <code>IC = Σ Oᵢ(Oᵢ−1) / [M(M−1)]</code> for M ≥ 2. Caesar only permutes Oᵢ, so both quantities are invariant. Neither statistic alone determines the shift.</p><p>For randomized encrypted bytes, a sample histogram can look approximately flat, but small samples fluctuate. Encoding ciphertext as hexadecimal creates a different alphabet of only 16 symbols; those character frequencies are not plaintext-letter frequencies. No claim of security follows from either histogram.</p></details>
+<details><summary>Inspectable core functions</summary><p>The complete HTML, CSS, JavaScript, training corpus and test text are embedded in this file. Use your browser’s “View page source” to inspect every line.</p><pre id="core-source"></pre></details>
+<details><summary>Correctness checks and environment</summary><p id="self-test" role="status">Checking arithmetic…</p><p>Browser-native Web Crypto supplies HKDF-SHA-256 and AES-256-GCM; the secp256k1 point arithmetic is implemented directly because browser ECDH APIs do not generally provide this curve. The self-check verifies the curve generator, 2G, the group order nG = O, Caesar wraparound and statistical invariants. Functional round-trip and attack checks were also run while preparing this file.</p><p>The page has no imported fonts, scripts, styles or corpus downloads. No installation is required. External links below are references only. If Web Crypto is unavailable, the page reports that limitation instead of substituting weak randomness or a different cipher.</p></details>
+<ol class="references"><li><a href="https://www.secg.org/sec2-v2.pdf" target="_blank" rel="noopener">Standards for Efficient Cryptography 2 (SEC 2), v2, §2.4.1</a> — secp256k1 domain parameters and conventional security scale.</li><li><a href="https://www.secg.org/sec1-v2.pdf" target="_blank" rel="noopener">Standards for Efficient Cryptography 1 (SEC 1), v2</a> — elliptic-curve arithmetic, key agreement and integrated encryption background.</li><li><a href="https://www.rfc-editor.org/rfc/rfc5869" target="_blank" rel="noopener">RFC 5869 — HKDF</a> — extract-and-expand key derivation.</li><li><a href="https://www.w3.org/TR/WebCryptoAPI/" target="_blank" rel="noopener">W3C — Web Cryptography API</a> — HKDF, AES-GCM and authenticated decryption.</li></ol><small>Corpus text and benchmark design are original demonstration material. Mathematical comparisons and scores are computed by this page; no benchmark rates are invented or hard-coded.</small>
+</section>
+<footer>Statistics · Homework 03 / Encryption & cryptanalysis<br>Educational experiment · Single-file HTML / CSS / JavaScript · No real wallet keys.</footer>
+</main>
+<script>
+'use strict';
+// ---------- 1. secp256k1 arithmetic (educational, variable-time) ----------
+const P = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2Fn;
+const N_ORDER = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141n;
+const G = {
+  x: 0x79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798n,
+  y: 0x483ADA7726A3C4655DA4FBFC0E1108A8FD17B448A68554199C47D08FFB10D4B8n
+};
+const mod = (x, p=P) => ((x % p) + p) % p;
+function inverse(x) {
+  let a = mod(x), b = P, u = 1n, v = 0n;
+  if (a === 0n) throw new Error('Zero has no modular inverse.');
+  while (b !== 0n) { const q = a / b; [a,b] = [b,a-q*b]; [u,v] = [v,u-q*v]; }
+  if (a !== 1n) throw new Error('No modular inverse.');
+  return mod(u);
+}
+function add(A,B) {
+  if (A === null) return B;
+  if (B === null) return A;
+  if (A.x === B.x && mod(A.y+B.y) === 0n) return null;
+  const slope = A.x === B.x && A.y === B.y
+    ? mod(3n*A.x*A.x*inverse(2n*A.y))
+    : mod((B.y-A.y)*inverse(B.x-A.x));
+  const x = mod(slope*slope-A.x-B.x);
+  return {x, y:mod(slope*(A.x-x)-A.y)};
+}
+function multiply(k, point=G) {
+  if (k < 0n) throw new Error('Scalar must be nonnegative.');
+  let result = null, current = point;
+  while (k > 0n) { if (k & 1n) result = add(result,current); current = add(current,current); k >>= 1n; }
+  return result;
+}
+const equal = (A,B) => A === null || B === null ? A === B : A.x === B.x && A.y === B.y;
+const onCurve = A => A !== null && A.x >= 0n && A.x < P && A.y >= 0n && A.y < P && mod(A.y*A.y-A.x*A.x*A.x-7n) === 0n;
+const hex32 = x => x.toString(16).padStart(64,'0');
+const pointHex = A => { if (!onCurve(A)) throw new Error('Invalid public point.'); return '04'+hex32(A.x)+hex32(A.y); };
+function decodePoint(s) {
+  if (typeof s !== 'string' || !/^04[0-9a-f]{128}$/i.test(s)) throw new Error('Expected a 65-byte uncompressed public point.');
+  const A = {x:BigInt('0x'+s.slice(2,66)), y:BigInt('0x'+s.slice(66))};
+  if (!onCurve(A)) throw new Error('Public point is not on secp256k1.');
+  return A;
+}
+function unhex(s, bytes) {
+  if (typeof s !== 'string' || !/^(?:[0-9a-f]{2})*$/i.test(s) || (bytes !== undefined && s.length !== bytes*2)) throw new Error('Invalid hexadecimal field or length.');
+  return Uint8Array.from(s.match(/../g) || [],x=>parseInt(x,16));
+}
+const hex = a => Array.from(new Uint8Array(a),x=>x.toString(16).padStart(2,'0')).join('');
+const encoder = new TextEncoder();
+const decoder = new TextDecoder('utf-8',{fatal:true});
+function randomBytes(n) { if (!globalThis.crypto?.getRandomValues) throw new Error('Cryptographic randomness is unavailable.'); return crypto.getRandomValues(new Uint8Array(n)); }
+function randomScalar() { for (;;) { const x = BigInt('0x'+hex(randomBytes(32))); if (x > 0n && x < N_ORDER) return x; } }
+function randomToyKey(max) {
+  const limit = Math.floor(4294967296/max)*max;
+  let v; do { const b=randomBytes(4); v=new DataView(b.buffer,b.byteOffset,4).getUint32(0); } while(v>=limit);
+  return v%max+1;
+}
+function needCrypto() { if (!globalThis.crypto?.subtle) throw new Error('Web Crypto is unavailable here. Open this file directly in a modern browser, or use HTTPS / localhost.'); }
+const contextBytes = (R,Q) => encoder.encode('ECC-CAESAR-LAB-v1|'+pointHex(R)+'|'+pointHex(Q));
+async function deriveKey(S,salt,info) {
+  needCrypto();
+  if (S === null) throw new Error('Invalid shared secret.');
+  const material = await crypto.subtle.importKey('raw',unhex(hex32(S.x),32),'HKDF',false,['deriveKey']);
+  return crypto.subtle.deriveKey({name:'HKDF',hash:'SHA-256',salt,info},material,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);
+}
+async function encryptECC(message,Q) {
+  needCrypto();
+  if (!onCurve(Q)) throw new Error('Invalid recipient key.');
+  const r=randomScalar(), R=multiply(r), S=multiply(r,Q);
+  const salt=randomBytes(16), iv=randomBytes(12), info=contextBytes(R,Q);
+  const K=await deriveKey(S,salt,info);
+  const ciphertext=await crypto.subtle.encrypt({name:'AES-GCM',iv,additionalData:info,tagLength:128},K,encoder.encode(message));
+  return {v:1,Q:pointHex(Q),R:pointHex(R),salt:hex(salt),iv:hex(iv),ciphertext:hex(ciphertext)};
+}
+function validatePacket(packet) {
+  if (!packet || packet.v !== 1) throw new Error('Unsupported packet version.');
+  const Q=decodePoint(packet.Q),R=decodePoint(packet.R),salt=unhex(packet.salt,16),iv=unhex(packet.iv,12),ciphertext=unhex(packet.ciphertext);
+  if (ciphertext.length<16 || ciphertext.length>80016) throw new Error('Invalid ciphertext length.');
+  return {Q,R,salt,iv,ciphertext};
+}
+async function decryptECC(packet,d) {
+  needCrypto();
+  if (d<1n || d>=N_ORDER) throw new Error('Private key must be in 1–n−1.');
+  const {Q,R,salt,iv,ciphertext}=validatePacket(packet);
+  if (!equal(multiply(d),Q)) throw new Error('That private key does not match the recipient public key.');
+  const info=contextBytes(R,Q), K=await deriveKey(multiply(d,R),salt,info);
+  let plaintext;
+  try { plaintext=await crypto.subtle.decrypt({name:'AES-GCM',iv,additionalData:info,tagLength:128},K,ciphertext); }
+  catch { throw new Error('Authentication failed: the packet was changed or is invalid.'); }
+  return decoder.decode(plaintext);
+}
+// Public-key attack: deliberately takes no private key or plaintext argument.
+async function recoverPrivate(Q,max,onProgress=()=>{},cancelled=()=>false) {
+  if (!onCurve(Q)) throw new Error('Invalid public-key target.');
+  if (!Number.isInteger(max) || max<1 || max>16384) throw new Error('Search bound must be 1–16,384.');
+  let T=G;
+  for (let candidate=1;candidate<=max;candidate++) {
+    if (cancelled()) return {cancelled:true,checks:candidate-1};
+    if (equal(T,Q)) return {key:BigInt(candidate),checks:candidate};
+    if (candidate<max) T=add(T,G);
+    if (candidate%64===0) { onProgress(candidate); await new Promise(resolve=>setTimeout(resolve,0)); }
+  }
+  return {key:null,checks:max};
+}
+// ---------- 2. Caesar and corpus-based scoring ----------
+function caesar(text,shift) {
+  const s=((shift%26)+26)%26;
+  return text.replace(/[A-Za-z]/g,c=>{ const base=c<='Z'?65:97; return String.fromCharCode(base+(c.charCodeAt(0)-base+s)%26); });
+}
+const letters = text => (text.match(/[A-Za-z]/g) || []).join('').toUpperCase();
+function counts(text) { const result=Array(26).fill(0); for(const c of letters(text)) result[c.charCodeAt(0)-65]++; return result; }
+function letterStats(text) {
+  const c=counts(text), total=c.reduce((s,x)=>s+x,0);
+  const entropy=total ? -c.reduce((s,x)=>x?s+x/total*Math.log2(x/total):s,0) : 0;
+  const ic=total>1?c.reduce((s,x)=>s+x*(x-1),0)/(total*(total-1)):null;
+  return {counts:c,total,entropy,ic};
+}
+function trainModel(text) {
+  const clean=letters(text), c=counts(clean), total=clean.length;
+  if(total<1000) throw new Error('Use at least 1,000 A–Z letters for the training corpus.');
+  const p=c.map(x=>(x+1)/(total+26));
+  const pairs=Array.from({length:26},()=>Array(26).fill(0)), row=Array(26).fill(0);
+  for(let i=1;i<total;i++){const a=clean.charCodeAt(i-1)-65,b=clean.charCodeAt(i)-65;pairs[a][b]++;row[a]++;}
+  const bigram=pairs.map((r,a)=>r.map(x=>(x+0.2)/(row[a]+26*0.2)));
+  return {p,bigram,total};
+}
+function rankShifts(ciphertext,model,method='chi') {
+  const clean=letters(ciphertext), M=clean.length;
+  if(!M) throw new Error('Enter at least one A–Z letter.');
+  const output=[];
+  for(let s=0;s<26;s++) {
+    const indices=Array.from(clean,c=>(c.charCodeAt(0)-65-s+26)%26);
+    let score;
+    if(method==='chi') {
+      const c=Array(26).fill(0); indices.forEach(i=>c[i]++);
+      score=c.reduce((sum,x,i)=>sum+(x-M*model.p[i])**2/(M*model.p[i]),0);
+    } else {
+      score=-Math.log2(model.p[indices[0]]);
+      for(let i=1;i<M;i++) score-=Math.log2(model.bigram[indices[i-1]][indices[i]]);
+      score/=M;
+    }
+    output.push({shift:s,score});
+  }
+  return output.sort((a,b)=>a.score-b.score || a.shift-b.shift);
+}
+// ---------- 3. Original demonstration corpora (separate train / test) ----------
+const TRAINING = `Language is a system of patterns shared by a community. The letters in a long English passage do not usually occur with equal frequency. Some sounds and spellings are common because they appear in everyday words, while other combinations are rare. Readers use both the identity of a symbol and the symbols around it to understand a sentence. A letter by itself provides little evidence, but a paragraph contains many overlapping clues. The purpose of a statistical model is to summarize these regularities without memorizing a particular secret message.
+A student entering a university library may first search the catalogue and then look for a book on the appropriate shelf. The title gives a useful clue, although the introduction and the table of contents may reveal more about the subject. When several books discuss the same question, it is sensible to compare their assumptions and their evidence. A clear explanation connects a definition to an example and explains why the example satisfies the definition. Careful study requires patience, repeated practice and a willingness to correct an early misunderstanding.
+Communication between computers involves a series of transformations. An application represents information as bytes, a transport protocol divides the stream into manageable units, and a network forwards packets between machines. Different layers solve different problems. A message may arrive later than expected, and an application must decide how to handle delay or failure. An acknowledgment can confirm that something arrived, but silence alone does not reveal exactly what happened. In a distributed system, observations are local and the order of distant events may remain uncertain.
+Encryption is intended to protect the content of a message from an observer who does not possess the required secret. Correct decryption must recover the original information when the proper key is available. Security requires more than correctness. A procedure might work perfectly for its intended users and still reveal the message to an attacker. A very small set of possible keys allows the attacker to test each candidate. A predictable key generator can reduce the effective search space even when the written key has many digits.
+In a simple substitution cipher each plaintext letter is replaced according to a fixed rule. Repeated letters remain repeated after encryption, and the structure of words can be visible. A rotation of the alphabet changes the names of the categories but preserves their counts. If the original passage has many instances of a common letter, the encrypted passage has equally many instances of its replacement. By comparing candidate rotations with a model of the language, an analyst can often recognize the most likely message. This conclusion is uncertain for a short or unusual sample.
+Probability provides a way to reason about uncertain observations. A sample proportion estimates the frequency of an outcome, but a finite sample rarely matches its population exactly. Increasing the amount of representative data often reduces random variation. Collecting more data from the wrong source does not remove systematic bias. A model trained on technical reports may describe a poem poorly, and a model of one language may be unsuitable for another. Every measurement should therefore be interpreted together with the method used to obtain it.
+Scientific experiments begin with a specific question and a procedure that another person can repeat. It is useful to distinguish the data used to choose a model from the data used to evaluate it. Otherwise a method can appear successful simply because it has adapted to the examples that will later be called a test. Recording the experimental conditions makes a result easier to assess. A table should identify what was measured, how many trials were performed and which assumptions limit the conclusion. A successful demonstration is evidence about the demonstrated setting rather than proof of universal behavior.
+A public key can be published without giving its owner the same capabilities as the corresponding private key. In elliptic curve systems a private scalar is multiplied by a fixed generator to produce a public point. Multiplication here means repeated group addition, which can be accelerated by doubling and adding according to the binary representation of the scalar. The reverse problem is called a discrete logarithm. Its difficulty depends on the group and on what is already known about the scalar. Restricting that scalar to a short interval changes the problem dramatically.
+A shared secret is not automatically a complete encryption scheme. A key derivation function converts suitable input material into keying material for a particular purpose. Authenticated encryption protects both confidentiality and the detection of unauthorized changes under a key. Public parameters, context labels and message formats must be agreed by the parties. Random values should be sampled from a reliable source, and values that must be fresh should not be reused. Implementation details matter because an elegant mathematical design can be undermined by an incorrect program.
+Walking through a city gives many ordinary examples of inference. A traveler estimates the arrival time of a bus from a schedule and recent observations. A shopkeeper orders goods according to earlier demand but allows for changes in the season. A gardener checks the soil before deciding whether a plant needs water. None of these observations removes every uncertainty, yet a combination of relevant evidence can improve a decision. The same principle applies when several statistical clues are combined to rank candidate explanations of an encrypted passage.
+Reading and writing also depend on context. The same short word can have several meanings, and a longer sentence often makes the intended meaning clear. Familiar pairs of letters occur in recurring endings, common articles and frequently used verbs. A model of adjacent letters captures some of this local structure. It does not understand the sentence, and it cannot reliably judge every proper name or invented word. Statistical prediction is useful precisely when its assumptions and limitations are made explicit.
+An honest report separates a theoretical claim from an observed number. The time taken by a browser depends on the machine, the implementation and other work happening at the same moment. A comparison of algorithms should describe their operation counts as well as any measured running time. Reproducible examples are valuable for education, but a fixed demonstration should not be mistaken for a complete survey. The goal is to understand why an experiment succeeds or fails and what evidence would be needed to generalize its conclusion.
+A family preparing an evening meal may divide the work among several people. One person washes the vegetables while another sets the table and checks the recipe. The order of independent tasks can change without affecting the final result, but some steps have clear dependencies. Ingredients must be measured before they are mixed, and a dish should be heated for the appropriate time. The plan can be simple while still describing the important relationships. Good technical explanations use a similar approach by identifying the purpose of each step before introducing unnecessary detail.
+The history of communication includes handwritten letters, printed newspapers, telegraph messages, telephone calls and digital networks. Each medium changes how information is represented and transmitted. A useful representation is not necessarily secret, and a checksum designed to detect accidental corruption does not replace a cryptographic authentication mechanism. Encoding, hashing, signing and encryption serve distinct purposes. Understanding the purpose of a transformation prevents confusion when several transformations appear in the same application.`;
+const TEST_TEXT = `On Saturday morning, a small group of friends left the station and followed a path toward the hills. Rain had fallen during the night, so the ground was soft and the air was cool. They carried a map, enough water and a few sandwiches. At the first crossing they stopped to check the direction rather than assume that the widest path was the correct one. Beyond a field they found a wooden bridge and a narrow stream. The route became steeper after the bridge, but the view opened as they climbed.
+During the walk they talked about a class project. Their teacher had asked them to explain an algorithm clearly enough for another student to reproduce the results. They agreed that a page full of impressive numbers would not be sufficient. Each number needed a definition, and each experiment needed a description of its input. One friend suggested keeping a record of unsuccessful attempts, because those attempts could reveal assumptions that had been hidden in the first version of the program.
+They reached a quiet village just before noon. An old building beside the square had been converted into a public reading room. Inside, a volunteer was arranging books and helping a visitor find a local history. The group sat near a window and compared the notes they had brought. One notebook contained a short encrypted sentence. Another contained the counts of letters from a collection of ordinary English paragraphs. The challenge was to connect the two without looking at the answer written on a separate sheet.
+At first they tried to guess the shift from the most frequent symbol. The guess worked on one example and failed on another. They then tested every shift and compared the complete distribution instead of relying on a single letter. This produced a better ranking, although a very short sentence still looked ambiguous. A name repeated several times could dominate the counts. They learned that the amount of text was only one part of the problem; its vocabulary and style also influenced the result.
+After lunch the group returned to the question of elliptic curves. The public point in their demonstration had been computed from a private number chosen from a small interval. Instead of studying the encrypted message, they generated the possible public points one after another. When a candidate matched both coordinates of the published point, they had found the private number. The original message could be recovered without estimating the frequency of any letter. This was a different kind of evidence from a statistical ranking.
+One student asked whether a larger field would prevent the search. The others noticed that the field was already enormous, while the interval of allowed private numbers was still small. Changing the size of the arithmetic did not create additional choices for the secret. The program needed to examine only the allowed candidates. They wrote this distinction at the top of their report so that a reader would not confuse the size of the curve with the entropy of the key.
+In the afternoon they began drafting their conclusions. A correct demonstration should distinguish what the attacker knows from what the legitimate user knows. A function that claims to recover a key must not quietly read that key from a hidden input. A benchmark should compare its prediction with the answer only after the prediction has been made. These requirements seemed obvious when stated directly, but they were easy to overlook while assembling an interactive page.
+As the light changed, the friends packed their notebooks and left the reading room. They walked back by a different route, passing an orchard and a row of houses. The trip had provided no universal guarantee about every possible encrypted text. It had given them a set of repeatable experiments and a clearer explanation of why the examples behaved as they did. That was enough to make the next stage of the project more precise and more useful.
+Before catching the train they reviewed their remaining questions. They wanted to try a corpus written in another language and to compare a newspaper article with a technical manual. They also planned to test messages made entirely of repeated symbols. Those cases would help them see where the scoring model failed. A good result was not merely a successful recovery; it was an account of the conditions under which recovery was reliable and the reasons it could become uncertain.`;
+// ---------- 4. UI state and safe text rendering ----------
+const $ = id => document.getElementById(id);
+const tick = () => new Promise(resolve=>setTimeout(resolve,0));
+let model=trainModel(TRAINING), modelDirty=false, current=null, eccCancelled=false, eccBusy=false, encryptionBusy=false, generation=0, benchmarkData=null;
+function status(id,message,error=false){$(id).textContent=message;$(id).classList.toggle('error',error);}
+function integerInput(id,min,max){const raw=$(id).value.trim(),x=Number(raw);if(!raw || !Number.isInteger(x) || x<min || x>max)throw new Error(`${id==='private'?'Private key':'Shift'} must be an integer from ${min} to ${max}.`);return x;}
+function readPacket(){if($('packet').value.length>200000)throw new Error('Packet is too large.');try{return JSON.parse($('packet').value);}catch{throw new Error('The packet is not valid JSON.');}}
+function tableCells(row,values){for(const value of values){const cell=document.createElement('td');cell.textContent=String(value);row.append(cell);}}
+function clearBenchmark(message='Inputs changed. Run the experiment again.'){benchmarkData=null;$('export').disabled=true;$('benchmark-rows').replaceChildren();const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=5;td.textContent=message;tr.append(td);$('benchmark-rows').append(tr);$('benchmark-discussion').textContent='';status('benchmark-status','');}
+function invalidateEncryption(){
+  generation++;eccCancelled=true;current=null;$('caesar-decrypt').disabled=true;$('ecc-decrypt').disabled=true;$('attack-ecc').disabled=true;
+  $('packet').value='';$('caesar-output').textContent='Inputs changed. Encrypt again.';$('caesar-plain').textContent='';$('ecc-plain').textContent='';$('recovered-key').textContent='—';$('checks').textContent='0';$('attack-progress').value=0;$('attack-plain').textContent='Encrypt a message to create a new target.';
+  status('encrypt-status','Inputs changed. Encrypt again.');status('decrypt-status','');status('attack-status','Encrypt a message to create a target.');
+}
+async function runEncryption(){
+  if(encryptionBusy || eccBusy)return;
+  let d,s,bound,message;
+  try{bound=Number($('bound').value);d=BigInt(integerInput('private',1,bound));s=integerInput('shift',0,25);message=$('message').value;if(!message.length)throw new Error('Enter a message first.');}
+  catch(e){status('encrypt-status',e.message,true);return;}
+  invalidateEncryption();const token=generation;encryptionBusy=true;$('encrypt').disabled=true;
+  const caesarCipher=caesar(message,s);current={message,s,caesarCipher};$('caesar-output').textContent=caesarCipher;$('caesar-decrypt').disabled=false;$('attack-text').value=caesarCipher;renderAnalysis();
+  status('encrypt-status','Caesar ready. Computing secp256k1 encryption…');
+  try{
+    const Q=multiply(d),packet=await encryptECC(message,Q);
+    if(token!==generation)return;
+    current={message,s,caesarCipher,packet,Q};$('packet').value=JSON.stringify(packet,null,2);$('decrypt-key').value=d.toString();$('ecc-decrypt').disabled=false;$('attack-ecc').disabled=false;$('attack-bound').value=String(bound);
+    $('recovered-key').textContent='—';$('checks').textContent='0';$('attack-progress').value=0;$('attack-plain').textContent='Ready: the attacker has only the public packet.';
+    status('encrypt-status','Both ciphertexts are ready. Decrypt them below, or run the attacks.');status('attack-status','Public target ready. No private key is passed to the search.');
+  }catch(e){if(token===generation)status('encrypt-status','Caesar works. ECC: '+e.message,true);}
+  finally{encryptionBusy=false;$('encrypt').disabled=false;}
+}
+$('encrypt').onclick=runEncryption;
+$('caesar-decrypt').onclick=()=>{if(current)$('caesar-plain').textContent=caesar(current.caesarCipher,-current.s);};
+$('ecc-decrypt').onclick=async()=>{
+  const token=generation,packetText=$('packet').value,keyText=$('decrypt-key').value;
+  $('ecc-decrypt').disabled=true;$('ecc-plain').textContent='';status('decrypt-status','Decrypting and verifying…');
+  try{if(!/^[1-9][0-9]*$/.test(keyText))throw new Error('Enter a positive integer private key.');const plain=await decryptECC(readPacket(),BigInt(keyText));if(token===generation&&packetText===$('packet').value&&keyText===$('decrypt-key').value){$('ecc-plain').textContent=plain;status('decrypt-status','Authentication passed. Message recovered.');}}
+  catch(e){if(token===generation)status('decrypt-status',e.message,true);}
+  finally{$('ecc-decrypt').disabled=!$('packet').value;}
+};
+['message','shift','private'].forEach(id=>$(id).addEventListener('input',invalidateEncryption));
+$('bound').onchange=()=>{$('private').max=$('bound').value;if(Number($('private').value)>Number($('bound').value))$('private').value=$('bound').value;invalidateEncryption();};
+$('random-key').onclick=()=>{try{$('private').value=String(randomToyKey(Number($('bound').value)));invalidateEncryption();}catch(e){status('encrypt-status',e.message,true);}};
+$('packet').addEventListener('input',()=>{generation++;eccCancelled=true;$('ecc-decrypt').disabled=!$('packet').value;$('attack-ecc').disabled=!$('packet').value;$('ecc-plain').textContent='';$('recovered-key').textContent='—';$('checks').textContent='0';$('attack-progress').value=0;$('attack-plain').textContent='Packet changed. Run a new search.';status('attack-status','Search target is the edited public packet.');status('decrypt-status','Packet changed. Verify by decrypting again.');});
+$('decrypt-key').addEventListener('input',()=>{$('ecc-plain').textContent='';status('decrypt-status','Key changed. Decrypt to test it.');});
+function renderAnalysis(){
+  if(modelDirty){status('analysis-status','Training corpus changed. Train the model before analysis.',true);return;}
+  try{
+    const text=$('attack-text').value,method=$('scorer').value,ranking=rankShifts(text,model,method),best=ranking[0],plain=caesar(text,-best.shift),stat=letterStats(plain),cipherStat=letterStats(text);
+    $('guess').textContent=String(best.shift);$('score-gap').textContent=(ranking[1].score-best.score).toFixed(3);$('guess-plain').textContent=plain;
+    $('rankings').replaceChildren();ranking.forEach((entry,i)=>{const tr=document.createElement('tr');if(!i)tr.className='best';const candidate=caesar(text,-entry.shift);tableCells(tr,[i+1,entry.shift,entry.score.toFixed(4),candidate.length>160?candidate.slice(0,160)+'…':candidate]);$('rankings').append(tr);});
+    $('letter-chart').replaceChildren();const freqs=stat.counts.map(x=>x/stat.total),peak=Math.max(...freqs,...model.p);
+    freqs.forEach((f,i)=>{const col=document.createElement('div');col.className='column';col.title=`${String.fromCharCode(65+i)}: candidate ${(f*100).toFixed(2)}%, corpus ${(model.p[i]*100).toFixed(2)}%`;const a=document.createElement('span'),b=document.createElement('span'),label=document.createElement('b');a.style.height=(f/peak*100)+'%';b.style.height=(model.p[i]/peak*100)+'%';a.style.background='var(--teal)';b.style.background='var(--blue)';label.textContent=String.fromCharCode(65+i);col.append(a,b,label);$('letter-chart').append(col);});
+    $('letter-chart').setAttribute('aria-label',`Letter distributions for ${stat.total} letters. The exact values are in the frequency table below.`);
+    $('distribution-stats').textContent=`${stat.total} letters · H(cipher) = ${cipherStat.entropy.toFixed(4)} bits/letter · H(candidate) = ${stat.entropy.toFixed(4)} · IC = ${stat.ic===null?'undefined (fewer than 2 letters)':stat.ic.toFixed(4)}. Chart heights share a scale with maximum ${(peak*100).toFixed(2)}%.`;
+    const table=document.createElement('table'),head=document.createElement('thead'),headRow=document.createElement('tr');['Letter','Count','Candidate %','Corpus %'].forEach(x=>{const th=document.createElement('th');th.textContent=x;headRow.append(th);});head.append(headRow);table.append(head);const body=document.createElement('tbody');freqs.forEach((f,i)=>{const tr=document.createElement('tr');tableCells(tr,[String.fromCharCode(65+i),stat.counts[i],(f*100).toFixed(3),(model.p[i]*100).toFixed(3)]);body.append(tr);});table.append(body);$('frequency-table').replaceChildren(table);
+    status('analysis-status',`Ranked all 26 shifts using ${method==='chi'?'corpus letter frequencies':'corpus bigrams'}. ${stat.total<50?'Short sample: treat this guess cautiously.':''}`);
+  }catch(e){$('guess').textContent='—';$('score-gap').textContent='—';$('guess-plain').textContent='';$('rankings').replaceChildren();$('letter-chart').replaceChildren();$('frequency-table').replaceChildren();$('distribution-stats').textContent='';status('analysis-status',e.message,true);}
+}
+$('analyse').onclick=renderAnalysis;$('scorer').onchange=renderAnalysis;
+$('use-cipher').onclick=()=>{if(current){$('attack-text').value=current.caesarCipher;renderAnalysis();}else status('analysis-status','Encrypt a message first, or paste ciphertext.',true);};
+$('attack-text').addEventListener('input',()=>{status('analysis-status','Ciphertext changed. Recover the shift again.');$('guess').textContent='—';$('score-gap').textContent='—';$('guess-plain').textContent='';$('rankings').replaceChildren();$('letter-chart').replaceChildren();$('frequency-table').replaceChildren();$('distribution-stats').textContent='';});
+function updateCorpusStatus(){status('corpus-status',`Model trained on ${model.total.toLocaleString()} letters · A–Z · Laplace unigrams / smoothed conditional bigrams.`);}
+$('corpus').value=TRAINING;$('test-corpus').value=TEST_TEXT;
+$('corpus').addEventListener('input',()=>{modelDirty=true;clearBenchmark();status('corpus-status','Corpus changed. Click Train both models.',true);status('analysis-status','Corpus changed. Train the model before analysis.',true);$('guess').textContent='—';$('score-gap').textContent='—';$('guess-plain').textContent='';$('rankings').replaceChildren();$('letter-chart').replaceChildren();$('frequency-table').replaceChildren();$('distribution-stats').textContent='';});
+$('train').onclick=()=>{try{const next=trainModel($('corpus').value);model=next;modelDirty=false;clearBenchmark();updateCorpusStatus();renderAnalysis();}catch(e){status('corpus-status',e.message,true);}};
+$('reset-corpus').onclick=()=>{$('corpus').value=TRAINING;model=trainModel(TRAINING);modelDirty=false;clearBenchmark();updateCorpusStatus();renderAnalysis();};
+$('test-corpus').addEventListener('input',()=>clearBenchmark());
+// ---------- 5. Repeatable held-out benchmark ----------
+function seededRandom(seed){let state=seed>>>0;return()=>{state=(Math.imul(1664525,state)+1013904223)>>>0;return state/4294967296;};}
+async function benchmark(modelSnapshot,testText,onRow=()=>{},isStale=()=>false){
+  const clean=letters(testText);if(clean.length<500)throw new Error('Test text needs at least 500 A–Z letters.');
+  const rng=seededRandom(20261019),lengths=[10,25,50,100,250,500],rows=[],trials=[];
+  for(const length of lengths){let chiHits=0,bigramHits=0,rankTotal=0;
+    for(let i=0;i<100;i++){
+      if(isStale())throw new Error('Inputs changed during the run. Run again.');
+      const start=Math.floor(rng()*(clean.length-length+1)),key=Math.floor(rng()*26),cipher=caesar(clean.slice(start,start+length),key);
+      const chi=rankShifts(cipher,modelSnapshot,'chi'),bi=rankShifts(cipher,modelSnapshot,'bigram'),trueRank=chi.findIndex(x=>x.shift===key)+1;
+      chiHits+=Number(chi[0].shift===key);bigramHits+=Number(bi[0].shift===key);rankTotal+=trueRank;
+      trials.push({length,trial:i+1,start,key,chiGuess:chi[0].shift,bigramGuess:bi[0].shift,trueRank});
+      if(i%10===9)await tick();
+    }
+    const row={length,trials:100,chiHits,bigramHits,meanRank:rankTotal/100};rows.push(row);onRow(row);
+  }
+  return {seed:20261019,trainingLetters:modelSnapshot.total,testLetters:clean.length,rows,trials};
+}
+function benchmarkRow(r){const tr=document.createElement('tr');tableCells(tr,[r.length,r.trials]);for(const hits of [r.chiHits,r.bigramHits]){const td=document.createElement('td'),bar=document.createElement('span'),fill=document.createElement('i');bar.className='successbar';fill.style.width=hits+'%';bar.append(fill);td.append(bar,document.createTextNode(`${hits} / 100 (${hits}%)`));tr.append(td);}tableCells(tr,[r.meanRank.toFixed(2)]);$('benchmark-rows').append(tr);}
+$('benchmark-run').onclick=async()=>{
+  if(modelDirty){status('benchmark-status','Train the updated corpus first.',true);return;}
+  const snapshot=model,trainText=$('corpus').value,test=$('test-corpus').value;$('benchmark-run').disabled=true;clearBenchmark('Running…');$('benchmark-rows').replaceChildren();status('benchmark-status','Scoring ciphertexts…');
+  try{const data=await benchmark(snapshot,test,benchmarkRow,()=>model!==snapshot||modelDirty||$('corpus').value!==trainText||$('test-corpus').value!==test);if(model!==snapshot||modelDirty||$('corpus').value!==trainText||$('test-corpus').value!==test)throw new Error('Inputs changed during the run. Run again.');benchmarkData=data;const first=data.rows[0],last=data.rows[data.rows.length-1];$('export').disabled=false;status('benchmark-status',`Completed 600 trials. Training: ${data.trainingLetters.toLocaleString()} letters; test pool: ${data.testLetters.toLocaleString()} letters. Seed ${data.seed}.`);$('benchmark-discussion').textContent=`Observed on these windows: χ² recovered ${first.chiHits}/100 keys at 10 letters and ${last.chiHits}/100 at 500; bigrams recovered ${first.bigramHits}/100 and ${last.bigramHits}/100 respectively. These are corpus-specific measurements. Short samples fluctuate; overlapping windows and a single test source limit generalization. Try another test text to examine domain shift.`;}
+  catch(e){clearBenchmark('Run incomplete. No final measurements available.');status('benchmark-status',e.message,true);}
+  finally{$('benchmark-run').disabled=false;}
+};
+$('export').onclick=()=>{if(!benchmarkData)return;const b=benchmarkData,lines=[`seed,${b.seed}`,`training_letters,${b.trainingLetters}`,`test_letters,${b.testLetters}`,'length_letters,trial,start_offset,true_shift,chi_guess,bigram_guess,true_key_chi_rank'];b.trials.forEach(t=>lines.push([t.length,t.trial,t.start,t.key,t.chiGuess,t.bigramGuess,t.trueRank].join(',')));const url=URL.createObjectURL(new Blob([lines.join('\n')],{type:'text/csv;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download='caesar-key-recovery.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
+// ---------- 6. Bounded public-key attack UI ----------
+$('cancel-ecc').onclick=()=>{eccCancelled=true;};
+$('attack-ecc').onclick=async()=>{
+  if(eccBusy||encryptionBusy)return;
+  let packet,Q,max;try{packet=readPacket();Q=validatePacket(packet).Q;max=Number($('attack-bound').value);}catch(e){status('attack-status',e.message,true);return;}
+  const packetText=$('packet').value,token=generation,start=performance.now();eccBusy=true;eccCancelled=false;$('attack-ecc').disabled=true;$('encrypt').disabled=true;$('cancel-ecc').disabled=false;$('attack-progress').max=max;$('attack-progress').value=0;$('recovered-key').textContent='—';$('checks').textContent='0';$('attack-plain').textContent='';status('attack-status','Searching public multiples of G…');
+  try{const result=await recoverPrivate(Q,max,c=>{$('checks').textContent=c.toLocaleString();$('attack-progress').value=c;},()=>eccCancelled||token!==generation);
+    if(token!==generation)return;
+    $('checks').textContent=result.checks.toLocaleString();$('attack-progress').value=result.checks;
+    if(result.cancelled){status('attack-status',`Search stopped after ${result.checks} candidate checks.`);return;}
+    if(result.key===null){status('attack-status',`No match in 1–${max.toLocaleString()}. Increase the bound if the key may be outside this interval.`);return;}
+    const plain=await decryptECC(packet,result.key);if(token!==generation||packetText!==$('packet').value)return;
+    $('recovered-key').textContent=result.key.toString();$('attack-plain').textContent=plain;status('attack-status',`Exact public-key match; tag verified. ${result.checks.toLocaleString()} checks, ${(performance.now()-start).toFixed(0)} ms on this device (includes UI yields and decryption).`);
+  }catch(e){if(token===generation)status('attack-status',e.message,true);}
+  finally{eccBusy=false;$('attack-ecc').disabled=!$('packet').value;$('encrypt').disabled=false;$('cancel-ecc').disabled=true;}
+};
+// ---------- 7. Self checks and initial state ----------
+function selfCheck(){
+  const checks=[['generator on curve',onCurve(G)],['identity',equal(add(G,null),G)],['inverse point',add(G,{x:G.x,y:mod(-G.y)})===null],['group order nG = O',multiply(N_ORDER)===null],['2G vector',pointHex(multiply(2n))==='04c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a'],['Caesar wraparound',caesar('Az, by! é',1)==='Ba, cz! é'],['Caesar round trip',caesar(caesar('Meet me! 123',7),-7)==='Meet me! 123']];
+  const a=letterStats(TRAINING),b=letterStats(caesar(TRAINING,11));checks.push(['entropy invariant',Math.abs(a.entropy-b.entropy)<1e-12],['IC invariant',a.ic===b.ic]);
+  if(checks.some(c=>!c[1]))throw new Error('Self-check failed: '+checks.filter(c=>!c[1]).map(c=>c[0]).join(', '));
+  return checks.length;
+}
+$('parameters').textContent=`p = 0x${P.toString(16)}\nn = 0x${N_ORDER.toString(16)}\nGx = 0x${hex32(G.x)}\nGy = 0x${hex32(G.y)}\nh = 1`;
+$('core-source').textContent=[caesar,rankShifts,add,multiply,recoverPrivate].map(f=>f.toString()).join('\n\n');
+updateCorpusStatus();
+try{const n=selfCheck();status('self-test',`${n} arithmetic and statistical self-checks passed.`);}
+catch(e){status('self-test',e.message,true);}
+// Fill the initial Caesar example immediately; ECC remains an explicit action.
+const initialShift=Number($('shift').value),initialMessage=$('message').value;
+current={message:initialMessage,s:initialShift,caesarCipher:caesar(initialMessage,initialShift)};
+$('caesar-output').textContent=current.caesarCipher;$('caesar-decrypt').disabled=false;$('attack-text').value=current.caesarCipher;renderAnalysis();
+status('encrypt-status','Caesar example ready. Click Encrypt with both schemes to generate a fresh ECC packet.');
+// Populate the experimental table from real calculations on each page load.
+$('benchmark-run').onclick();
+</script>
+</body>
+</html>
