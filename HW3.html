@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="A reproducible stochastic penetration lab: Bernoulli and Rademacher random walks, the law of large numbers, variance scaling and the central limit theorem.">
+<title>Penetration Lab — Random walks, LLN & CLT</title>
+<style>
+:root{color-scheme:dark;--bg:#000;--ink:#69d6ca;--muted:#9dbbc5;--line:#2d4054;--panel:#142235;--deep:#101d2d;--soft:#1e3349;--light:#d6e9ee;--gold:#e3bc7e;--teal:#087e65;--red:#f08b68}*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:24px}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.65 Arial,sans-serif}a{color:inherit;text-decoration:none}a:hover{color:#b2fff0}button,input,select{font:inherit}button,a.button{cursor:pointer;border:1px solid #3c576b;background:transparent;color:var(--ink);border-radius:5px;padding:10px 16px;display:inline-flex;align-items:center;justify-content:center;gap:18px}button:hover,a.button:hover{background:var(--soft)}button:disabled{opacity:.45;cursor:wait}button.primary,a.primary{background:var(--teal);color:#f4fffc;border-color:var(--teal)}button.primary:hover,a.primary:hover{background:#096e5b}a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--ink);outline-offset:4px}input,select{width:100%;background:var(--deep);color:#84dfd3;border:1px solid #3c576b;border-radius:4px;padding:10px;min-height:44px}input:disabled{opacity:.4}header,main,footer{max-width:1340px;margin:auto}header{padding:24px 35px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:22px;align-items:center}.brand{font-size:18px;font-weight:700;letter-spacing:1px;white-space:nowrap}.brand span{font-weight:400}nav{display:flex;gap:24px;font-size:12px}.badge{font:10px/1.5 monospace;padding:5px 10px;border:1px solid var(--line);border-radius:20px;white-space:nowrap}main{padding:0 35px}.hero{display:grid;grid-template-columns:1.2fr 1fr;align-items:center;gap:70px;padding:64px 0 55px}.eyebrow{font:10px/1.6 monospace;letter-spacing:1.8px;text-transform:uppercase;margin:0 0 16px}h1{font-size:clamp(46px,5.5vw,76px);font-weight:500;letter-spacing:-3.6px;line-height:1.04;margin:0 0 24px}h1 em{font-family:Georgia,serif;font-weight:400}p{color:var(--muted);margin:12px 0 18px}.intro{max-width:480px;font-size:16px}.hero-visual{min-height:355px;padding:30px;border-radius:150px 150px 10px 10px;background:radial-gradient(ellipse at 50% 45%,#24465a,#101d2d 75%);border:1px solid var(--line);position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:center}.hero-visual .eyebrow{text-align:center;margin-top:10px}.hero-formula{text-align:center;font:66px Georgia,serif;letter-spacing:-3px;line-height:1.2;color:#a2f0e4}.hero-visual svg{display:block;width:100%;height:105px;overflow:visible}.hero-labels{display:flex;justify-content:space-between;font:10px monospace;color:#b8d8e5;padding-top:8px}.strip{display:grid;grid-template-columns:repeat(4,1fr);padding:22px 0;border-block:1px solid var(--line)}.strip>div{padding-left:25px;border-left:1px solid var(--line)}.strip>div:first-child{padding:0;border:0}.strip strong{display:block;font:28px/1.4 Georgia,serif}.strip span{font-size:12px;color:var(--muted)}section{padding-top:68px}.section-head{display:flex;align-items:end;justify-content:space-between;gap:35px;margin-bottom:26px}.section-head>p{max-width:370px;font-size:14px;margin:0}h2{font-size:40px;line-height:1.13;letter-spacing:-1.6px;font-weight:500;margin:0}h3{font-size:22px;font-weight:500;letter-spacing:-.5px;line-height:1.3;margin:8px 0 12px}h4{font-size:15px;margin:14px 0 6px;font-weight:500}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.card{min-width:0;background:var(--panel);border:1px solid var(--line);border-radius:7px;padding:23px}.card p{font-size:13px}.card .eyebrow{margin-bottom:12px}.equation{font:15px/1.9 monospace;color:#b8d8e5;overflow-wrap:anywhere}.muted{color:var(--muted)}.note{font-size:12px;color:var(--muted)}.notice{padding:14px 20px;border-left:3px solid #32b4a4;background:var(--panel);font-size:13px;margin:20px 0;color:#b8d8e5}.notice strong{color:var(--ink)}.controls{background:var(--panel);border:1px solid var(--line);border-radius:7px;overflow:hidden}.control-grid{padding:22px;display:grid;grid-template-columns:1.5fr 1fr 1fr .85fr 1fr .8fr;gap:16px}label{display:block;font-size:11px;margin-bottom:7px}label small{color:var(--muted);font-size:10px}input[type=range]{accent-color:var(--ink);padding:0;min-height:25px}input[type=number]{appearance:textfield}.control-actions{border-top:1px solid var(--line);padding:16px 22px;background:var(--deep);display:flex;align-items:center;gap:12px;flex-wrap:wrap}.control-actions p{margin:0;font-size:12px;flex:1;min-width:210px}.progress{height:3px;background:var(--deep)}.progress>div{height:100%;width:0;background:var(--ink);transition:width .1s}.result-heading{margin:27px 0 14px;display:flex;align-items:center;justify-content:space-between;gap:20px}.result-heading p{font:11px/1.7 monospace;margin:0;max-width:80%}.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--ink);margin-right:8px}.horizon{display:flex;align-items:center;gap:20px;padding:17px 22px;background:var(--deep);border:1px solid var(--line);border-radius:6px;margin-bottom:20px}.horizon label{margin:0;min-width:170px}.horizon input{flex:1;min-width:50px}.horizon output{font:15px monospace;min-width:85px;text-align:right}.plots .card{padding:20px 17px 16px}.plot-title{display:flex;justify-content:space-between;align-items:center;gap:8px}.plot-title h3{font:21px Georgia,serif;margin:0}.plot-title span{font:9px monospace;color:var(--muted)}canvas{width:100%;height:230px;display:block;margin-top:12px}canvas.wide{height:255px}.metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px;border-top:1px solid var(--line);padding-top:13px;margin-top:8px}.metrics span{font:10px monospace;color:var(--muted);display:block}.metrics strong{font:17px/1.6 monospace;color:#d6e9ee;font-weight:400}.legend{display:flex;gap:20px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin:13px 0 22px}.legend i{display:inline-block;width:22px;border-top:2px solid var(--ink);vertical-align:middle;margin-right:7px}.legend i.gold{border-color:var(--gold);border-top-style:dashed}.legend i.band{border-top:7px solid #244d50}.subhead{margin:28px 0 13px;display:flex;justify-content:space-between;gap:20px;align-items:center}.subhead h3{margin:0}.subhead span{font-size:11px;color:var(--muted)}.hist-note{font-size:11px!important;min-height:37px;margin:12px 0 0!important}.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:7px}table{width:100%;border-collapse:collapse;font-size:12px;color:#b8d8e5;background:var(--panel)}th{font:10px/1.6 monospace;text-transform:uppercase;color:var(--ink);background:var(--soft);white-space:nowrap}td,th{text-align:right;padding:13px 16px;border-bottom:1px solid var(--line)}td:first-child,th:first-child{text-align:left}tbody tr:last-child td{border:0}tr.selected td{background:#1c3946;color:#d6f5ee}td .bar{display:inline-block;vertical-align:middle;height:5px;background:var(--ink);margin-left:8px;max-width:60px}caption{caption-side:bottom;text-align:left;font-size:11px;padding:12px 16px;color:var(--muted);background:var(--deep)}.theory td,.theory th{text-align:left;vertical-align:top}.theory td:first-child{color:var(--ink);min-width:135px}.theory{min-width:690px}.callout{background:var(--soft);border-radius:6px;padding:22px 26px;margin-top:23px}.callout p{font-size:14px}.callout h3{margin-top:0}.readout{font-size:13px;margin-top:20px}.readout b{color:#b6f4e8;font-weight:500}.section-rule{border-top:1px solid var(--line);margin-top:48px}.steps{counter-reset:step;display:grid;grid-template-columns:repeat(3,1fr);gap:25px}.steps article{border-top:1px solid var(--line);padding-top:17px}.steps article:before{counter-increment:step;content:'0' counter(step);font:11px monospace}.steps p{font-size:13px}.formula-box{background:var(--deep);border-radius:4px;padding:15px 18px;font:13px/1.9 monospace;color:#c1dce5;margin:16px 0;overflow-wrap:anywhere}.source-list{display:grid;grid-template-columns:1fr 1fr;gap:25px;margin-top:22px}.source-list a{display:block;padding:16px 0;border-bottom:1px solid var(--line);font-size:13px}.source-list small{display:block;color:var(--muted);font-size:11px;margin-top:4px}details{border-top:1px solid var(--line);padding-top:16px;margin-top:20px}summary{cursor:pointer;font-size:13px}details p,details li{font-size:13px;color:var(--muted)}pre{overflow:auto;background:var(--deep);border-radius:4px;padding:20px;color:#b8d8e5;font:12px/1.8 monospace}footer{padding:30px 35px;margin-top:65px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:20px;color:var(--muted);font-size:11px}[hidden]{display:none!important}.error{color:var(--red)!important}.skip{position:absolute;left:-9999px}.skip:focus{left:15px;top:15px;background:var(--panel);padding:10px;z-index:10}
+@media(min-width:1500px){canvas{height:250px}}@media(max-width:1050px){.control-grid{grid-template-columns:repeat(3,1fr)}.hero{gap:35px}.plots .card{padding:15px 12px}.metrics strong{font-size:14px}nav{gap:15px}}@media(max-width:760px){header{padding:20px}.badge{display:none}main{padding:0 20px}.hero{grid-template-columns:1fr;padding:40px 0;gap:30px}.hero-visual{min-height:265px;border-radius:100px 100px 8px 8px}.hero-formula{font-size:56px}h1{letter-spacing:-2.4px;font-size:58px}.strip{grid-template-columns:1fr 1fr;gap:18px}.strip>div:nth-child(3){border:0;padding:0}.section-head{display:block}.section-head>p{margin-top:18px}.grid3,.grid2,.steps,.source-list{grid-template-columns:1fr}section{padding-top:48px}h2{font-size:35px}.control-grid{grid-template-columns:1fr 1fr;gap:16px;padding:18px}.control-actions{padding:16px 18px}.horizon{gap:10px;padding:14px;flex-wrap:wrap}.horizon label{width:100%}.horizon output{min-width:70px}.subhead{align-items:start}.subhead span{max-width:150px;text-align:right}.plots canvas{height:250px}.metrics strong{font-size:18px}.source-list{gap:0}.card{padding:20px}.result-heading{align-items:start}.result-heading p{max-width:100%}.result-heading .badge{display:none}footer{padding:25px 20px;flex-wrap:wrap}nav a:nth-child(2),nav a:nth-child(4){display:none}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.progress>div{transition:none}}@media print{body{background:white;color:#123}header nav,.controls,.horizon,.control-actions,footer button{display:none}.card,.notice,.callout,table,th,caption{background:#f1f5f6;color:#123}.card p,p,.note,.muted,td{color:#234}main,header,footer{max-width:none;padding:0}section{padding-top:25px}.hero{padding:20px 0}.hero-visual{display:none}.hero{grid-template-columns:1fr}.grid3{grid-template-columns:repeat(3,1fr)}.equation,.metrics strong{color:#123}a{color:#135}canvas{break-inside:avoid}.section-head{break-after:avoid}h1{font-size:40px}}
+</style>
+</head>
+<body>
+<a class="skip" href="#simulator">Skip to simulator</a>
+<header><a class="brand" href="#">◈ PENETRATION<span>LAB</span></a><nav aria-label="Main navigation"><a href="#simulator">Simulator</a><a href="#limits">Limit laws</a><a href="#context">Interpretation</a><a href="#method">Method</a></nav><span class="badge">STATISTICS / STOCHASTIC PROCESSES</span></header>
+<main>
+<div class="hero"><div><div class="eyebrow">INDEPENDENT STEPS · EMERGING PATTERNS</div><h1>Random steps.<br>Predictable<br><em>limits.</em></h1><p class="intro">Follow <em>m</em> attackers across <em>n</em> systems. Change the score model, trace the paths, and see what grows, what concentrates, and what becomes Gaussian.</p><a class="button primary" href="#simulator">Run the experiment <span>↘</span></a></div><div class="hero-visual" role="img" aria-label="Random walk paths representing scores accumulated across systems"><div class="eyebrow">ONE PROCESS · THREE PERSPECTIVES</div><div class="hero-formula">n → ∞</div><svg viewBox="0 0 400 105" aria-hidden="true"><path d="M0 55H400" stroke="#446475" stroke-dasharray="3 5"/><g fill="none" stroke-width="1.5"><path d="M0 55 20 44 40 55 60 44 80 33 100 44 120 33 140 44 160 33 180 22 200 33 220 22 240 33 260 22 280 33 300 22 320 11 340 22 360 11 380 22 400 11" stroke="#69d6ca"/><path d="M0 55 20 66 40 55 60 66 80 55 100 66 120 77 140 66 160 77 180 66 200 77 220 66 240 77 260 88 280 77 300 88 320 77 340 88 360 77 380 88 400 77" stroke="#598b9e"/><path d="M0 55 20 44 40 55 60 66 80 55 100 44 120 55 140 44 160 55 180 66 200 55 220 44 240 55 260 44 280 55 300 66 320 55 340 44 360 55 380 44 400 55" stroke="#e3bc7e"/></g></svg><div class="hero-labels"><span>Sₙ</span><span>Sₙ / n</span><span>Sₙ / √n</span></div></div></div>
+<div class="strip"><div><strong>2 models</strong><span>Bernoulli & Rademacher</span></div><div><strong>3 scales</strong><span>same increments, different views</span></div><div><strong>2 limit laws</strong><span>LLN concentration · CLT shape</span></div><div><strong>100% local</strong><span>one file · no dependencies</span></div></div>
+<section id="models"><div class="section-head"><div><div class="eyebrow">01 / DEFINE THE EXPERIMENT</div><h2>A system is a step.<br>An attacker is a path.</h2></div><p>Every attacker encounters the same number of systems. All increments are independent, both across steps and across attackers.</p></div>
+<div class="grid2"><article class="card"><div class="eyebrow">MODEL A / SUCCESS COUNTS</div><h3>Bernoulli increments</h3><div class="equation">Xᵢ ∈ {0, 1}<br>P(Xᵢ = 1) = p<br>μ = p &nbsp; σ² = p(1 − p)</div><p>A successful penetration adds 1. A failed attempt adds 0. The total Sₙ counts successful attacker–system attempts, so it never decreases. Each attacker makes one attempt per system.</p><div class="formula-box">Sₙ ~ Binomial(n, p)</div></article><article class="card"><div class="eyebrow">MODEL B / SIGNED SCORES</div><h3>Rademacher increments</h3><div class="equation">Xᵢ ∈ {−1, +1}<br>P(Xᵢ = +1) = P(Xᵢ = −1) = ½<br>μ = 0 &nbsp; σ² = 1</div><p>+1 means a gain; −1 means an equally weighted setback. This is a symmetric random walk. Its score can be negative: it is a net score, rather than a count of compromised systems.</p><div class="formula-box">Sₙ = 2Bₙ − n, &nbsp; Bₙ ~ Binomial(n, ½)</div></article></div><div class="notice"><strong>Notation.</strong> For attacker j, S<sub>j,k</sub> = ∑<sub>i=1</sub><sup>k</sup> X<sub>j,i</sub>, with S<sub>j,0</sub> = 0. The homework's Sₙ is one attacker's score at the final system. The <em>m</em> attackers provide independent replications of that stochastic process.</div></section>
+<section id="simulator"><div class="section-head"><div><div class="eyebrow">02 / GENERATE · INSPECT · COMPARE</div><h2>The simulation bench.</h2></div><p>Run once, then move the inspection slider. Each checkpoint reuses the prefixes of the same simulated paths.</p></div>
+<form id="controls" class="controls"><div class="control-grid"><div><label for="model">Increment model</label><select id="model"><option value="rademacher">Rademacher · −1 / +1</option><option value="bernoulli">Bernoulli · 0 / 1</option></select></div><div><label for="n">Systems n <small>per attacker</small></label><select id="n"><option>30</option><option>100</option><option>300</option><option selected>1000</option><option>3000</option><option>10000</option></select></div><div><label for="m">Attackers m <small>independent paths</small></label><select id="m"><option>100</option><option>500</option><option selected>2000</option><option>5000</option></select></div><div><label for="p">Success probability p</label><input id="p" type="number" min="0" max="1" step="0.01" value="0.5" disabled></div><div><label for="seed">Seed <small>reproducible</small></label><input id="seed" type="number" min="0" max="4294967295" step="1" value="2026" required></div><div><label for="epsilon">LLN tolerance ε</label><input id="epsilon" type="number" min="0.001" max="2" step="any" value="0.1" required></div></div><div class="control-actions"><button class="primary" id="run" type="submit">Run simulation ↗</button><button type="button" id="new-seed">New seed</button><p id="status" role="status" aria-live="polite">Preparing the first experiment…</p><button type="button" id="export" disabled>Export data ↓</button></div><div class="progress" role="progressbar" aria-label="Simulation progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="progress"></div></div></form>
+<noscript><div class="notice">Enable JavaScript to use the interactive simulation. The theory and interpretation below remain readable.</div></noscript>
+<div id="results" hidden><div class="result-heading"><p id="run-description"></p><span class="badge">SAME PATHS / THREE NORMALIZATIONS</span></div><div class="horizon"><label for="checkpoint">Inspect system count k <small>within the run</small></label><input id="checkpoint" type="range" min="0" max="1" step="1" value="0"><output id="checkpoint-label" for="checkpoint"></output></div>
+<div class="grid3 plots"><article class="card"><div class="plot-title"><h3>S<sub>k</sub></h3><span>TOTAL SCORE</span></div><canvas id="path-total" role="img" aria-label="Sample total score trajectories"></canvas><p class="note">Absolute score; fluctuations spread out.</p></article><article class="card"><div class="plot-title"><h3>S<sub>k</sub> / k</h3><span>AVERAGE SCORE</span></div><canvas id="path-average" role="img" aria-label="Sample average score trajectories and LLN tolerance band"></canvas><p class="note">Per-system score; fluctuations shrink.</p></article><article class="card"><div class="plot-title"><h3>S<sub>k</sub> / √k</h3><span>NORMALIZED TOTAL</span></div><canvas id="path-normalized" role="img" aria-label="Sample square root normalized score trajectories"></canvas><p class="note">Constant theoretical variance; mean may move.</p></article></div>
+<div class="legend"><span><i></i>First 24 attackers (or fewer)</span><span><i class="gold"></i>Theoretical mean</span><span><i class="band"></i>μ ± ε in the average plot</span><span>Vertical marker: selected k · plots use independent y scales</span></div>
+<div class="subhead"><h3>Across all attackers, at the selected k.</h3><span>Histograms show probability per bin</span></div><div class="grid3 plots"><article class="card"><div class="plot-title"><h3>S<sub>k</sub></h3><span>ENDPOINT DISTRIBUTION</span></div><canvas id="hist-total" role="img" aria-label="Histogram of total scores"></canvas><div class="metrics" id="stats-total"></div><p class="hist-note" id="theory-total"></p></article><article class="card"><div class="plot-title"><h3>S<sub>k</sub> / k</h3><span>ENDPOINT DISTRIBUTION</span></div><canvas id="hist-average" role="img" aria-label="Histogram of average scores"></canvas><div class="metrics" id="stats-average"></div><p class="hist-note" id="theory-average"></p></article><article class="card"><div class="plot-title"><h3>S<sub>k</sub> / √k</h3><span>ENDPOINT DISTRIBUTION</span></div><canvas id="hist-normalized" role="img" aria-label="Histogram of square root normalized scores"></canvas><div class="metrics" id="stats-normalized"></div><p class="hist-note" id="theory-normalized"></p></article></div><div class="legend"><span><i></i>Empirical bin probability</span><span><i class="gold"></i>Gaussian approximation: probability over the same bin</span><span>Each histogram has its own x scale; compare variance values to assess spread</span></div><p class="note">Bins align with the attainable score lattice (spacing 1 for Bernoulli, 2 for Rademacher before rescaling). Adjacent lattice points are grouped when needed. The Gaussian overlay is an approximation, not an exact finite-k distribution.</p>
+<div class="callout" id="live-findings" aria-live="polite"></div>
+<div class="subhead"><h3>What changes as k increases?</h3><span>Empirical variance [theory]</span></div><div class="table-wrap"><table id="evolution"><thead><tr><th>Systems k</th><th>Mean Sₖ/k</th><th>Var(Sₖ)</th><th>Var(Sₖ/k)</th><th>Var(Sₖ/√k)</th></tr></thead><tbody></tbody><caption>Moments use all m attackers. Empirical variance divides by m (a population moment estimate); it is slightly biased as an estimator of the true variance. Brackets give the exact theoretical value.</caption></table></div>
+</div></section>
+<section id="limits"><div class="section-head"><div><div class="eyebrow">03 / THE LAW OF LARGE NUMBERS</div><h2>Averages settle.<br>Totals need not.</h2></div><p>Convergence in probability concerns the chance of a deviation. It does not require every sample trajectory to improve at every step.</p></div>
+<div class="grid2"><article class="card"><h3>The LLN statement</h3><div class="formula-box">For every fixed ε &gt; 0:<br>P(|Sₙ/n − μ| &gt; ε) → 0 as n → ∞.<br><br>Sₙ/n → μ in probability.</div><p>The mean is p for Bernoulli increments and 0 for Rademacher increments. Increasing n concentrates each attacker's average around that mean. A finite experiment illustrates this result; it does not prove a limiting theorem.</p><h4>A direct variance argument</h4><div class="equation">P(|Sₙ/n − μ| &gt; ε) ≤ σ²/(nε²)</div><p>Chebyshev's inequality gives a bound tending to zero. The displayed bound is capped at 1, since probabilities cannot exceed 1. It can be much larger than the actual probability.</p></article><article class="card"><div class="plot-title"><h3>Outside the tolerance band</h3><span>LLN CHECK</span></div><canvas id="lln-chart" class="wide" role="img" aria-label="Observed fractions outside the LLN tolerance band compared with Chebyshev bounds"></canvas><div class="legend"><span><i></i>Observed fraction</span><span><i class="gold"></i>Chebyshev upper bound</span></div><p class="note">Logarithmic k axis; linear probability axis. Zero observed exceptions means none among these m paths, not zero theoretical probability. Sampling noise and lattice effects can make finite-k fractions nonmonotone.</p></article></div>
+<div class="table-wrap" style="margin-top:22px"><table id="lln-table"><thead><tr><th>Systems k</th><th>Outside μ ± ε</th><th>Observed fraction</th><th>Monte Carlo SE</th><th>Chebyshev bound</th></tr></thead><tbody></tbody><caption>The event is the strict inequality |Sₖ/k − μ| &gt; ε. SE = √[q̂(1 − q̂)/m] is a plug-in sampling standard error, not a confidence interval. At q̂ = 0 or 1 it is zero and understates uncertainty; checkpoints on the same paths are dependent.</caption></table></div>
+<div class="section-rule"></div><div class="section-head" style="margin-top:36px"><div><div class="eyebrow">04 / VARIANCE UNDER RESCALING</div><h2>One sum.<br>Three different scales.</h2></div><p>Independence gives Var(Sₙ) = nσ². Multiplying a random variable by a constant c multiplies its variance by c².</p></div>
+<div class="table-wrap"><table class="theory"><thead><tr><th>Quantity</th><th>Expectation</th><th>Variance</th><th>As n grows</th></tr></thead><tbody><tr><td>Sₙ</td><td>nμ</td><td>nσ²</td><td>For σ² &gt; 0, the variance grows linearly. The typical centered fluctuation is of order √n.</td></tr><tr><td>Sₙ / n</td><td>μ</td><td>σ² / n</td><td>The variance tends to zero, so the average concentrates around μ.</td></tr><tr><td>Sₙ / √n</td><td>μ√n</td><td>σ²</td><td>The variance stays constant. A nonzero mean still moves with √n.</td></tr></tbody></table></div>
+<div class="notice"><strong>Spread versus location.</strong> Constant variance does not guarantee convergence to a fixed distribution. For Bernoulli p &gt; 0, Sₙ/√n has mean p√n and tends to +∞ in probability. Centering is essential. When p = 0 or 1, the Bernoulli process is deterministic and all variances are zero.</div>
+<div class="section-rule"></div><div class="section-head" style="margin-top:36px"><div><div class="eyebrow">05 / THE CENTRAL LIMIT THEOREM</div><h2>Fluctuations find<br>a familiar shape.</h2></div><p>The CLT describes the distribution across independent trajectories at a large fixed n. One trajectory need not converge to a fixed value.</p></div>
+<div class="grid2"><article class="card"><h3>Center, then standardize.</h3><div class="formula-box">Zₙ = (Sₙ − nμ) / (σ√n)<br>Zₙ ⇒ N(0, 1), provided σ² &gt; 0.</div><p><strong>Rademacher:</strong> μ = 0 and σ = 1, so Zₙ = Sₙ/√n exactly. Its variance is already 1 for every n; the shape approaches normal as n grows.</p><p><strong>Bernoulli:</strong> Zₙ = (Sₙ − np)/√[np(1 − p)]. Dividing by √n alone leaves mean p√n and variance p(1 − p); it does not give a standard normal limit.</p><p id="clt-caution" class="notice"></p><p class="note">At finite n these scores are discrete. Rademacher totals also have the same parity as n. Normal convergence is in distribution, not pointwise equality of probability masses.</p></article><article class="card"><div class="plot-title"><h3 id="z-title">Standardized endpoints Zₖ</h3><span>CLT CHECK</span></div><canvas id="clt-chart" class="wide" role="img" aria-label="Standardized score histogram compared with a standard normal distribution"></canvas><div class="metrics" id="z-stats"></div><p class="note" id="z-note"></p><div class="legend"><span><i></i>Empirical probability</span><span><i class="gold"></i>N(0, 1) bin probability</span></div></article></div>
+</section>
+<section id="context"><div class="section-head"><div><div class="eyebrow">06 / BACK TO SYSTEMS & ATTACKERS</div><h2>What does the<br>score actually measure?</h2></div><p>The simulation separates a larger system population from a larger population of independent attackers.</p></div>
+<div class="steps"><article><h3>Increase n: longer paths.</h3><p>Each attacker attempts more systems. Bernoulli totals have mean np; signed Rademacher totals keep mean 0 but standard deviation √n. In both cases the per-system average becomes more stable. For Bernoulli, the probability that one attacker succeeds at least once is 1 − (1 − p)ⁿ.</p></article><article><h3>Increase m: more replications.</h3><p>The distribution of a single attacker's Sₙ stays the same. More attackers make the empirical histogram and estimated means more stable. Monte Carlo standard errors typically fall like 1/√m. A smoother histogram at fixed n does not mean the CLT approximation improved.</p></article><article><h3>Aggregate: add the paths.</h3><p>For Aₙ = ∑<sub>j=1</sub><sup>m</sup>S<sub>j,n</sub>, independence gives E[Aₙ] = mnμ and Var(Aₙ) = mnσ². Thus Var(Aₙ/(mn)) = σ²/(mn). There are mn attempted encounters; the summed score includes all of them.</p></article></div>
+<div class="grid2" style="margin-top:22px"><article class="card"><h3>Aggregate score in this run</h3><div id="aggregate" class="readout">Run the experiment to inspect the aggregate score.</div></article><article class="card"><h3>Successful attempts ≠ distinct systems.</h3><p>Several attackers may succeed against the same system. In the Bernoulli model, Aₙ counts successful attempts and can exceed n.</p><div class="equation">P(a given system is penetrated)<br>= 1 − (1 − p)ᵐ<br>E[distinct penetrated systems]<br>= n[1 − (1 − p)ᵐ]</div><p>This follows from the independent attacker assumption. The expected distinct-system count saturates at n as m grows; the expected attempt count mnp keeps increasing.</p></article></div>
+<div class="callout"><h3>Interpret the model within its assumptions.</h3><p>Systems have identical success probability; attackers do not learn, cooperate, exhaust resources, or change the defenses. No real systems are contacted. Shared vulnerabilities and coordinated attackers can create dependencies; then Var(Sₙ) includes covariance terms and these formulas may no longer apply. The Rademacher model studies symmetry and signed fluctuations, rather than a realistic compromise count.</p></div>
+</section>
+<section id="method"><div class="section-head"><div><div class="eyebrow">07 / REPRODUCE & EXPLAIN</div><h2>From experiment<br>to a homework argument.</h2></div><p>Use the same settings and seed to reproduce a run. Export the checkpoint data to calculate your own summaries.</p></div>
+<div class="grid2"><article class="card"><h3>A useful experimental sequence</h3><ol class="muted" style="padding-left:20px;font-size:13px"><li>Start with Rademacher, n = 1000 and m = 2000. Inspect increasing checkpoints. Compare the three empirical variances with their theoretical values.</li><li>Increase n to 10000. Check concentration of Sₖ/k near 0 and the standardized histogram near N(0, 1).</li><li>Switch to Bernoulli with p = 0.3. Observe the average near 0.3 and the uncentered Sₖ/√k shifting right.</li><li>Compare m = 100 with m = 5000 at fixed n. Explain smoother empirical distributions without a change in the underlying single-attacker law.</li><li>Try p = 0.01 at small n, then large n. Skewness persists when expected successes are small. Finally try p = 0 or 1.</li></ol></article><article class="card"><h3>Simulation method</h3><p>A seeded Mulberry32 pseudorandom generator produces U in [0, 1). Each draw becomes 1{U &lt; p} for Bernoulli or +1 if U &lt; ½ and −1 otherwise for Rademacher. This is Monte Carlo sampling, not cryptographic randomness.</p><p>Paths are sampled at up to 300 plotting points; the first 24 are drawn. All mn increments are generated, and all m exact endpoints are kept at every reported checkpoint. No normal approximation is used to generate scores.</p><p>Histogram bars give observed fractions per bin. Gold marks give Gaussian probabilities integrated over those exact bins. Axes adapt to the data; numerical variance is the reliable comparison across scales.</p><p class="note">A seed reproduces the entire run with the same parameters. Changing n or m starts a new experiment; checkpoints within a run are the controlled prefix comparison.</p></article></div>
+<details><summary>Show the core algorithm and exported data fields</summary><pre><code>for each attacker j = 1, …, m:
+    score = 0
+    for each system i = 1, …, n:
+        u = nextSeededUniform()
+        x = (u &lt; p ? 1 : 0)                 // Bernoulli
+        // or: x = (u &lt; 0.5 ? +1 : -1)      // Rademacher
+        score += x
+        if i is a checkpoint:
+            save score, score / i, score / sqrt(i)
+
+At each checkpoint, summarize across all m attackers.
+Empirical variance = mean((value - empiricalMean)^2).</code></pre><p>CSV fields: model, p, seed, configured_n, m, epsilon, attacker, k, total, average, normalized_total, standardized_z. For Rademacher p is 0.5. For deterministic Bernoulli runs standardized_z is empty. One row represents one attacker at one checkpoint. The CSV preserves every endpoint used by the histograms and tables, but does not include all intermediate path steps.</p></details>
+<div class="source-list"><a href="https://ocw.mit.edu/courses/18-05-introduction-to-probability-and-statistics-spring-2022/mit18_05_s22_class06-prep-b.pdf" target="_blank" rel="noopener noreferrer">MIT OpenCourseWare ↗<small>18.05 · Central Limit Theorem and the Law of Large Numbers · Spring 2022</small></a><a href="#simulator">Return to the experiment ↑<small>Change one parameter at a time; report settings alongside conclusions.</small></a></div>
+</section>
+</main><footer><span>◈ PENETRATION LAB · Statistics homework</span><span>HTML + CSS + JavaScript · Runs offline in your browser</span><button type="button" id="print">Print / save PDF</button></footer>
+<script>
+'use strict';
+// A single seeded stream is used for every exact increment in a run.
+const $ = id => document.getElementById(id);
+const TYPES = ['total','average','normalized'];
+const C = {ink:'#69d6ca',muted:'#9dbbc5',line:'#2d4054',gold:'#e3bc7e',band:'rgba(105,214,202,.10)',light:'#d6e9ee'};
+let result = null, running = false;
+function mulberry32(seed) {
+  let state = seed >>> 0;
+  return () => {
+    state = (state + 0x6D2B79F5) | 0;
+    let t = Math.imul(state ^ state >>> 15, 1 | state);
+    t ^= t + Math.imul(t ^ t >>> 7, 61 | t);
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+function moments(values) {
+  let count=0,mean=0,m2=0;
+  for (const v of values) { count++; const d=v-mean; mean+=d/count; m2+=d*(v-mean); }
+  return {mean,variance:count ? Math.max(0,m2/count) : 0};
+}
+function fmt(x) {
+  if (!Number.isFinite(x)) return '—';
+  if (x===0) return '0';
+  const a=Math.abs(x);
+  if (a<.0001 || a>=1e7) return x.toExponential(2);
+  return x.toLocaleString('en-US',{maximumFractionDigits:a<.01?6:a<1?4:3});
+}
+function pct(x) { return (100*x).toFixed(x>0&&x<.001?3:2)+'%'; }
+function scale(type,k) { return type==='total'?1:type==='average'?1/k:1/Math.sqrt(k); }
+function params() {
+  const model=$('model').value,n=+$('n').value,m=+$('m').value,p=model==='bernoulli'?+$('p').value:.5,seed=+$('seed').value,epsilon=+$('epsilon').value;
+  if(!Number.isInteger(n)||n<10||n>10000||!Number.isInteger(m)||m<1||m>5000||!Number.isFinite(p)||p<0||p>1||!Number.isInteger(seed)||seed<0||seed>4294967295||!Number.isFinite(epsilon)||epsilon<.001||epsilon>2) throw new Error('Check the input ranges before running.');
+  return {model,n,m,p,seed,epsilon,mu:model==='bernoulli'?p:0,sigma2:model==='bernoulli'?p*(1-p):1};
+}
+function checkpoints(n) { return [...new Set([10,30,100,300,1000,3000,10000,n].filter(k=>k<=n))].sort((a,b)=>a-b); }
+const pause = () => new Promise(resolve=>setTimeout(resolve,0));
+async function simulate(q,onProgress=()=>{}) {
+  const rng=mulberry32(q.seed),ks=checkpoints(q.n),ends=ks.map(()=>new Int32Array(q.m));
+  const plotSteps=[...new Set([1,...Array.from({length:Math.min(300,q.n)},(_,i)=>Math.round(1+i*(q.n-1)/(Math.min(300,q.n)-1)))])];
+  const paths=[],shown=Math.min(24,q.m),rademacher=q.model==='rademacher';
+  const batch=Math.max(1,Math.min(100,Math.floor(300000/q.n)));
+  for(let j=0;j<q.m;j++) {
+    let s=0,c=0,t=0;
+    const path=j<shown?new Int32Array(plotSteps.length):null;
+    for(let k=1;k<=q.n;k++) {
+      const u=rng();s+=rademacher?(u<.5?1:-1):(u<q.p?1:0);
+      if(k===ks[c]) {ends[c][j]=s;c++;}
+      if(path&&k===plotSteps[t]) {path[t]=s;t++;}
+    }
+    if(path)paths.push(path);
+    if((j+1)%batch===0||j===q.m-1){onProgress((j+1)/q.m);await pause();}
+  }
+  const summaries=ends.map((v,i)=>{
+    const k=ks[i],s=moments(v);let outside=0;
+    // Tiny tolerance removes floating-point artifacts at a strict boundary.
+    for(const total of v) if(Math.abs(total/k-q.mu)-q.epsilon>1e-12) outside++;
+    return {k,...s,outside,fraction:outside/q.m,bound:Math.min(1,q.sigma2/(k*q.epsilon*q.epsilon))};
+  });
+  return {...q,ks,ends,paths,plotSteps,summaries};
+}
+// Canvas plots use CSS dimensions and a device-pixel-ratio backing buffer.
+function frame(id,xmin,xmax,ymin,ymax,xLabel,yLabel,logX=false) {
+  const el=$(id),w=el.getBoundingClientRect().width||360,h=el.getBoundingClientRect().height||230,dpr=Math.min(window.devicePixelRatio||1,2);
+  el.width=Math.round(w*dpr);el.height=Math.round(h*dpr);
+  const g=el.getContext('2d');g.scale(dpr,dpr);g.clearRect(0,0,w,h);
+  const box={l:53,r:w-13,t:22,b:h-39};
+  if(!(xmax>xmin)){xmin-=.5;xmax+=.5;}if(!(ymax>ymin)){ymin-=.5;ymax+=.5;}
+  const tx=v=>logX?Math.log10(v):v,lo=tx(xmin),hi=tx(xmax);
+  const x=v=>box.l+(tx(v)-lo)/(hi-lo)*(box.r-box.l),y=v=>box.b-(v-ymin)/(ymax-ymin)*(box.b-box.t);
+  g.font='10px monospace';g.lineWidth=1;
+  for(let i=0;i<=4;i++) {
+    const value=ymin+i*(ymax-ymin)/4,yy=y(value);
+    g.strokeStyle=C.line;g.beginPath();g.moveTo(box.l,yy);g.lineTo(box.r,yy);g.stroke();
+    g.fillStyle=C.muted;g.textAlign='right';g.fillText(axis(value),box.l-7,yy+3);
+    const xx=box.l+i*(box.r-box.l)/4,xv=logX?10**(lo+i*(hi-lo)/4):xmin+i*(xmax-xmin)/4;
+    g.textAlign='center';g.fillText(axis(xv),xx,box.b+16);
+  }
+  g.fillStyle=C.muted;g.textAlign='left';g.fillText(yLabel,box.l,11);g.textAlign='right';g.fillText(xLabel,box.r,h-4);
+  return {g,x,y,box,w,h,xmin,xmax,ymin,ymax};
+}
+function axis(v){const a=Math.abs(v);if(a<1e-12)return '0';if(a>=10000)return (v/1000).toFixed(a<100000?1:0)+'k';if(a<.001)return v.toExponential(1);return (+v.toPrecision(3)).toString();}
+function clip(f,fn){const {g,box:b}=f;g.save();g.beginPath();g.rect(b.l,b.t,b.r-b.l,b.b-b.t);g.clip();fn();g.restore();}
+function line(f,pts,color,width=1.5,dash=[]){const {g,x,y}=f;g.strokeStyle=color;g.lineWidth=width;g.setLineDash(dash);g.beginPath();pts.forEach(([a,b],i)=>i?g.lineTo(x(a),y(b)):g.moveTo(x(a),y(b)));g.stroke();g.setLineDash([]);}
+function plotPaths(type,selectedK) {
+  const r=result;let lo=Infinity,hi=-Infinity;
+  r.paths.forEach(path=>path.forEach((s,t)=>{const v=s*scale(type,r.plotSteps[t]);lo=Math.min(lo,v);hi=Math.max(hi,v);}));
+  const means=r.plotSteps.map(k=>[k,r.mu*k*scale(type,k)]);
+  for(const [,v]of means){lo=Math.min(lo,v);hi=Math.max(hi,v);}
+  if(type==='average'){lo=Math.min(lo,r.mu-r.epsilon);hi=Math.max(hi,r.mu+r.epsilon);}
+  const pad=(hi-lo||1)*.08;const f=frame('path-'+type,1,r.n,lo-pad,hi+pad,'system k',type==='total'?'score':type==='average'?'score / k':'score / √k');
+  clip(f,()=>{
+    if(type==='average'){f.g.fillStyle=C.band;f.g.fillRect(f.box.l,f.y(r.mu+r.epsilon),f.box.r-f.box.l,f.y(r.mu-r.epsilon)-f.y(r.mu+r.epsilon));}
+    r.paths.forEach((path,j)=>line(f,r.plotSteps.map((k,t)=>[k,path[t]*scale(type,k)]),j===0?'#92f5df':`hsla(${164+j*2},45%,${54+j%4*5}%,.23)`,j===0?1.4:.8));
+    line(f,means,C.gold,1.8,[5,4]);line(f,[[selectedK,f.ymin],[selectedK,f.ymax]],'#afced7',1,[2,4]);
+  });
+}
+// Normal CDF approximation; used only for overlay probabilities, not sampling.
+function normalCDF(x){if(x===Infinity)return 1;if(x===-Infinity)return 0;const t=1/(1+.2316419*Math.abs(x)),d=.3989422804014327*Math.exp(-x*x/2);const p=1-d*t*(.319381530+t*(-.356563782+t*(1.781477937+t*(-1.821255978+t*1.330274429))));return x>=0?p:1-p;}
+function makeBins(values,k,r) {
+  const spacing=r.model==='rademacher'?2:1,origin=r.model==='rademacher'?-k:0;
+  let min=Infinity,max=-Infinity;for(const v of values){min=Math.min(min,v);max=Math.max(max,v);}
+  const group=Math.max(1,Math.ceil(((max-min)/spacing+1)/26)),width=group*spacing;
+  // Center the first lattice group on its points; every observed endpoint is included.
+  const first=min-spacing/2,last=max+spacing/2,count=Math.max(1,Math.ceil((last-first)/width));
+  const bins=Array.from({length:count},(_,i)=>({lo:first+i*width,hi:first+(i+1)*width,count:0}));
+  for(const v of values)bins[Math.min(count-1,Math.max(0,Math.floor((v-first)/width)))].count++;
+  return bins.map(b=>({...b,mass:b.count/values.length}));
+}
+function histogram(id,bins,transform,normalMean,normalSD,xLabel) {
+  const mapped=bins.map(b=>({...b,lo:transform(b.lo),hi:transform(b.hi)}));
+  const exact=normalSD>0;
+  for(const b of mapped)b.expected=exact?Math.max(0,normalCDF((b.hi-normalMean)/normalSD)-normalCDF((b.lo-normalMean)/normalSD)):0;
+  const ymax=Math.max(.01,...mapped.flatMap(b=>[b.mass,b.expected]))*1.18;
+  const f=frame(id,mapped[0].lo,mapped.at(-1).hi,0,ymax,xLabel,'probability / bin');
+  clip(f,()=>{
+    for(const b of mapped){const left=f.x(b.lo),right=f.x(b.hi);f.g.fillStyle='rgba(105,214,202,.58)';f.g.fillRect(left+.6,f.y(b.mass),Math.max(.5,right-left-1.2),f.y(0)-f.y(b.mass));}
+    if(exact)for(const b of mapped)line(f,[[b.lo,b.expected],[b.hi,b.expected]],C.gold,2,[4,2]);
+  });
+  return f;
+}
+function renderLLN() {
+  const r=result,ss=r.summaries;const f=frame('lln-chart',r.ks[0],r.n,0,1,'system count k · log scale','probability',true);
+  clip(f,()=>{line(f,ss.map(s=>[s.k,s.bound]),C.gold,1.7,[5,4]);line(f,ss.map(s=>[s.k,s.fraction]),C.ink,2);for(const s of ss){f.g.fillStyle=C.ink;f.g.beginPath();f.g.arc(f.x(s.k),f.y(s.fraction),3,0,2*Math.PI);f.g.fill();}});
+}
+function render() {
+  if(!result)return;const r=result,index=+$('checkpoint').value,k=r.ks[index],s=r.summaries[index],values=r.ends[index],bins=makeBins(values,k,r);
+  $('checkpoint-label').textContent='k = '+k.toLocaleString('en-US');
+  for(const type of TYPES){
+    const a=scale(type,k),em=s.mean*a,ev=s.variance*a*a,tm=k*r.mu*a,tv=k*r.sigma2*a*a;
+    plotPaths(type,k);histogram('hist-'+type,bins,v=>v*a,tm,Math.sqrt(tv),type==='total'?'total score':type==='average'?'average score':'normalized total');
+    $('stats-'+type).innerHTML=`<div><span>EMPIRICAL MEAN</span><strong>${fmt(em)}</strong></div><div><span>EMPIRICAL VARIANCE</span><strong>${fmt(ev)}</strong></div>`;
+    $('theory-'+type).textContent=`Theory: mean ${fmt(tm)} · variance ${fmt(tv)}.`;
+    $('hist-'+type).setAttribute('aria-label',`${type} histogram at k=${k}; empirical mean ${fmt(em)}, variance ${fmt(ev)}; theoretical mean ${fmt(tm)}, variance ${fmt(tv)}.`);
+  }
+  $('evolution').querySelector('tbody').innerHTML=r.summaries.map(t=>`<tr class="${t.k===k?'selected':''}"><td>${t.k.toLocaleString('en-US')}</td><td>${fmt(t.mean/t.k)}</td><td>${fmt(t.variance)} [${fmt(t.k*r.sigma2)}]</td><td>${fmt(t.variance/t.k**2)} [${fmt(r.sigma2/t.k)}]</td><td>${fmt(t.variance/t.k)} [${fmt(r.sigma2)}]</td></tr>`).join('');
+  $('lln-table').querySelector('tbody').innerHTML=r.summaries.map(t=>`<tr class="${t.k===k?'selected':''}"><td>${t.k.toLocaleString('en-US')}</td><td>${t.outside.toLocaleString('en-US')} / ${r.m.toLocaleString('en-US')}</td><td>${pct(t.fraction)} <span class="bar" style="width:${t.fraction*60}px"></span></td><td>${pct(Math.sqrt(t.fraction*(1-t.fraction)/r.m))}</td><td>${pct(t.bound)}</td></tr>`).join('');
+  renderLLN();
+  const gaussianScale=Math.sqrt(k*r.sigma2);
+  if(gaussianScale>0){
+    const zmean=(s.mean-k*r.mu)/gaussianScale,zvar=s.variance/(k*r.sigma2);
+    histogram('clt-chart',bins,v=>(v-k*r.mu)/gaussianScale,0,1,'standardized score z');
+    $('z-stats').innerHTML=`<div><span>MEAN · TARGET 0</span><strong>${fmt(zmean)}</strong></div><div><span>VARIANCE · TARGET 1</span><strong>${fmt(zvar)}</strong></div>`;
+    $('z-note').textContent=r.model==='rademacher'?'Here Zₖ = Sₖ/√k. Gold marks integrate the standard normal over each bin. The finite-k distribution is still discrete.':'Here Zₖ = (Sₖ − kp)/√[kp(1 − p)]. Centering and division by the increment standard deviation are essential.';
+  }else{
+    const f=frame('clt-chart',-3,3,0,1,'standardized score z','probability / bin');f.g.textAlign='center';f.g.fillStyle=C.light;f.g.fillText('Undefined: σ² = 0',f.w/2,f.h/2);
+    $('z-stats').innerHTML='<div><span>STANDARDIZED Z</span><strong>Undefined</strong></div><div><span>INCREMENT VARIANCE</span><strong>0</strong></div>';
+    $('z-note').textContent='When p = 0 or 1 every path is deterministic. There is no nondegenerate Gaussian limit.';
+  }
+  $('clt-caution').textContent=r.model==='rademacher'?`Selected k = ${k}: exact mean 0, exact variance 1 after √k normalization. Increasing k improves the Gaussian approximation; increasing m improves its empirical estimate.`:gaussianScale===0?'Degenerate case: p = 0 or p = 1. The standard CLT normalization divides by zero and is undefined.':`At k = ${k}, expected successes kp = ${fmt(k*r.p)} and failures k(1 − p) = ${fmt(k*(1-r.p))}. If either is small, the finite-k normal approximation can be poor. There is no universal n that guarantees a good approximation.`;
+  const direction=r.model==='rademacher'?'The normalized total has theoretical mean 0 and variance 1. Its distribution approaches N(0, 1); a single path does not have to settle.':`The uncentered normalized total has mean p√k = ${fmt(r.mu*Math.sqrt(k))} and variance p(1 − p) = ${fmt(r.sigma2)}. ${r.p>0?'Its location shifts right as k increases.':'Here p = 0, so every score is zero.'}`;
+  $('live-findings').innerHTML=`<h3>Reading this checkpoint</h3><p>At <b>k = ${k.toLocaleString('en-US')}</b>, the observed average is <b>${fmt(s.mean/k)}</b> across ${r.m.toLocaleString('en-US')} attackers; its LLN target is <b>${fmt(r.mu)}</b>. <b>${pct(s.fraction)}</b> of paths lie more than ε = ${fmt(r.epsilon)} from that target.</p><p>${direction} The three endpoint histograms are affine rescalings of the same scores, so their shapes match after axes are rescaled.</p>`;
+  const aggregate=s.mean*r.m,aggMean=r.m*k*r.mu,aggVar=r.m*k*r.sigma2;
+  const distinct=r.model==='bernoulli'? (r.p===1?k:k*(-Math.expm1(r.m*Math.log1p(-r.p)))):null;
+  $('aggregate').innerHTML=`<p>Selected checkpoint: <b>k = ${k.toLocaleString('en-US')}</b> · <b>${(r.m*k).toLocaleString('en-US')}</b> attempted encounters.</p><div class="formula-box">Observed Aₖ = ${fmt(Math.round(aggregate))}<br>E[Aₖ] = mkμ = ${fmt(aggMean)}<br>Var(Aₖ) = mkσ² = ${fmt(aggVar)}<br>Observed Aₖ/(mk) = ${fmt(s.mean/k)}</div><p>${r.model==='bernoulli'?`Expected distinct penetrated systems: <b>${fmt(distinct)}</b> out of ${k.toLocaleString('en-US')}. This is a theoretical expectation; unique compromises were not tallied separately.`:'Aₖ is a net signed score. Positive and negative increments cancel; it is not a number of unique compromises.'} The variance above is theoretical, since this run produces just one aggregate across all m attackers.</p>`;
+}
+async function start(event) {
+  if(event)event.preventDefault();if(running)return;
+  let q;try{q=params();}catch(e){$('status').textContent=e.message;$('status').classList.add('error');return;}
+  running=true;$('status').classList.remove('error');
+  const controls=[...$('controls').querySelectorAll('input,select,button')];controls.forEach(e=>e.disabled=true);$('checkpoint').disabled=true;
+  try{
+    $('status').textContent='Generating exact independent increments…';await pause();
+    const r=await simulate(q,progress=>{$('progress').style.width=(100*progress)+'%';$('progress').parentElement.setAttribute('aria-valuenow',Math.round(progress*100));});
+    result=r;$('results').hidden=false;$('checkpoint').max=r.ks.length-1;$('checkpoint').value=r.ks.length-1;
+    $('run-description').textContent=`● ${r.model==='rademacher'?'Rademacher (±1, symmetric)':'Bernoulli (p = '+r.p+')'} · n = ${r.n.toLocaleString('en-US')} · m = ${r.m.toLocaleString('en-US')} · ε = ${r.epsilon} · seed ${r.seed}`;
+    render();$('status').textContent=`Complete · ${(q.n*q.m).toLocaleString('en-US')} increments. Move the slider to inspect checkpoints.`;
+  }catch(e){$('status').textContent='Simulation failed: '+e.message;$('status').classList.add('error');}
+  finally{running=false;controls.forEach(e=>e.disabled=false);$('p').disabled=$('model').value!=='bernoulli';$('export').disabled=!result;$('checkpoint').disabled=false;}
+}
+function exportCSV(){
+  if(!result)return;const r=result,rows=['model,p,seed,configured_n,m,epsilon,attacker,k,total,average,normalized_total,standardized_z'];
+  r.ks.forEach((k,c)=>{for(let j=0;j<r.m;j++){const s=r.ends[c][j],sd=Math.sqrt(k*r.sigma2);rows.push([r.model,r.p,r.seed,r.n,r.m,r.epsilon,j+1,k,s,s/k,s/Math.sqrt(k),sd>0?(s-k*r.mu)/sd:''].join(','));}});
+  const url=URL.createObjectURL(new Blob([rows.join('\r\n')+'\r\n'],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download=`penetration-${r.model}-n${r.n}-m${r.m}-seed${r.seed}.csv`;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+$('controls').addEventListener('submit',start);
+$('controls').addEventListener('input',e=>{if(e.target.id==='model')$('p').disabled=e.target.value!=='bernoulli';if(!running&&result)$('status').textContent='Settings changed. Run the simulation to update the results.';});
+$('new-seed').onclick=()=>{const a=new Uint32Array(1);if(window.crypto&&crypto.getRandomValues)crypto.getRandomValues(a);else a[0]=Math.floor(Math.random()*4294967296);$('seed').value=a[0];$('status').textContent='New seed selected. Run the simulation to generate new paths.';};
+$('checkpoint').addEventListener('input',render);$('export').onclick=exportCSV;$('print').onclick=()=>window.print();
+let resizeTimer;window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(render,120);});
+// The first render automatically runs an exact, reproducible Rademacher experiment.
+start();
+</script>
+</body>
+</html>
