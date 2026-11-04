@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Welford’s recurrence formulas, derived step by step, and an interactive experiment on sampling means and unbiased sampling variances.">
+<title>Statistics Lab — Welford & Sampling</title>
+<style>
+:root{color-scheme:dark;--bg:#000;--ink:#69d6ca;--muted:#9dbbc5;--line:#2d4054;--panel:#142235;--deep:#101d2d;--soft:#1e3349;--light:#d6e9ee;--gold:#e3bc7e;--teal:#087e65;--red:#f08b68}*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:24px}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.65 Arial,sans-serif}a{color:inherit;text-decoration:none}a:hover{color:#b2fff0}button,input,select{font:inherit}button,a.button{cursor:pointer;border:1px solid #3c576b;background:transparent;color:var(--ink);border-radius:5px;padding:10px 16px;display:inline-flex;align-items:center;justify-content:center;gap:18px}button:hover,a.button:hover{background:var(--soft)}button:disabled{opacity:.45;cursor:wait}button.primary,a.primary{background:var(--teal);color:#f4fffc;border-color:var(--teal)}button.primary:hover,a.primary:hover{background:#096e5b}a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--ink);outline-offset:4px}input,select{width:100%;background:var(--deep);color:#84dfd3;border:1px solid #3c576b;border-radius:4px;padding:10px;min-height:44px}input:disabled{opacity:.4}header,main,footer{max-width:1340px;margin:auto}header{padding:24px 35px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:22px;align-items:center}.brand{font-size:18px;font-weight:700;letter-spacing:1px;white-space:nowrap}.brand span{font-weight:400}nav{display:flex;gap:24px;font-size:12px}.badge{font:10px/1.5 monospace;padding:5px 10px;border:1px solid var(--line);border-radius:20px;white-space:nowrap}main{padding:0 35px}.hero{display:grid;grid-template-columns:1.2fr 1fr;align-items:center;gap:70px;padding:64px 0 55px}.eyebrow{font:10px/1.6 monospace;letter-spacing:1.8px;text-transform:uppercase;margin:0 0 16px}h1{font-size:clamp(46px,5.5vw,76px);font-weight:500;letter-spacing:-3.6px;line-height:1.04;margin:0 0 24px}h1 em{font-family:Georgia,serif;font-weight:400}p{color:var(--muted);margin:12px 0 18px}.intro{max-width:480px;font-size:16px}.hero-visual{min-height:355px;padding:30px;border-radius:150px 150px 10px 10px;background:radial-gradient(ellipse at 50% 45%,#24465a,#101d2d 75%);border:1px solid var(--line);position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:center}.hero-visual .eyebrow{text-align:center;margin-top:10px}.hero-formula{text-align:center;font:66px Georgia,serif;letter-spacing:-3px;line-height:1.2;color:#a2f0e4}.hero-visual svg{display:block;width:100%;height:105px;overflow:visible}.hero-labels{display:flex;justify-content:space-between;font:10px monospace;color:#b8d8e5;padding-top:8px}.strip{display:grid;grid-template-columns:repeat(4,1fr);padding:22px 0;border-block:1px solid var(--line)}.strip>div{padding-left:25px;border-left:1px solid var(--line)}.strip>div:first-child{padding:0;border:0}.strip strong{display:block;font:28px/1.4 Georgia,serif}.strip span{font-size:12px;color:var(--muted)}section{padding-top:68px}.section-head{display:flex;align-items:end;justify-content:space-between;gap:35px;margin-bottom:26px}.section-head>p{max-width:370px;font-size:14px;margin:0}h2{font-size:40px;line-height:1.13;letter-spacing:-1.6px;font-weight:500;margin:0}h3{font-size:22px;font-weight:500;letter-spacing:-.5px;line-height:1.3;margin:8px 0 12px}h4{font-size:15px;margin:14px 0 6px;font-weight:500}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.card{min-width:0;background:var(--panel);border:1px solid var(--line);border-radius:7px;padding:23px}.card p{font-size:13px}.card .eyebrow{margin-bottom:12px}.equation{font:15px/1.9 monospace;color:#b8d8e5;overflow-wrap:anywhere}.muted{color:var(--muted)}.note{font-size:12px;color:var(--muted)}.notice{padding:14px 20px;border-left:3px solid #32b4a4;background:var(--panel);font-size:13px;margin:20px 0;color:#b8d8e5}.notice strong{color:var(--ink)}.controls{background:var(--panel);border:1px solid var(--line);border-radius:7px;overflow:hidden}.control-grid{padding:22px;display:grid;grid-template-columns:1.5fr 1fr 1fr .85fr 1fr .8fr;gap:16px}label{display:block;font-size:11px;margin-bottom:7px}label small{color:var(--muted);font-size:10px}input[type=range]{accent-color:var(--ink);padding:0;min-height:25px}input[type=number]{appearance:textfield}.control-actions{border-top:1px solid var(--line);padding:16px 22px;background:var(--deep);display:flex;align-items:center;gap:12px;flex-wrap:wrap}.control-actions p{margin:0;font-size:12px;flex:1;min-width:210px}.progress{height:3px;background:var(--deep)}.progress>div{height:100%;width:0;background:var(--ink);transition:width .1s}.result-heading{margin:27px 0 14px;display:flex;align-items:center;justify-content:space-between;gap:20px}.result-heading p{font:11px/1.7 monospace;margin:0;max-width:80%}.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--ink);margin-right:8px}.horizon{display:flex;align-items:center;gap:20px;padding:17px 22px;background:var(--deep);border:1px solid var(--line);border-radius:6px;margin-bottom:20px}.horizon label{margin:0;min-width:170px}.horizon input{flex:1;min-width:50px}.horizon output{font:15px monospace;min-width:85px;text-align:right}.plots .card{padding:20px 17px 16px}.plot-title{display:flex;justify-content:space-between;align-items:center;gap:8px}.plot-title h3{font:21px Georgia,serif;margin:0}.plot-title span{font:9px monospace;color:var(--muted)}canvas{width:100%;height:230px;display:block;margin-top:12px}canvas.wide{height:255px}.metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px;border-top:1px solid var(--line);padding-top:13px;margin-top:8px}.metrics span{font:10px monospace;color:var(--muted);display:block}.metrics strong{font:17px/1.6 monospace;color:#d6e9ee;font-weight:400}.legend{display:flex;gap:20px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin:13px 0 22px}.legend i{display:inline-block;width:22px;border-top:2px solid var(--ink);vertical-align:middle;margin-right:7px}.legend i.gold{border-color:var(--gold);border-top-style:dashed}.legend i.band{border-top:7px solid #244d50}.subhead{margin:28px 0 13px;display:flex;justify-content:space-between;gap:20px;align-items:center}.subhead h3{margin:0}.subhead span{font-size:11px;color:var(--muted)}.hist-note{font-size:11px!important;min-height:37px;margin:12px 0 0!important}.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:7px}table{width:100%;border-collapse:collapse;font-size:12px;color:#b8d8e5;background:var(--panel)}th{font:10px/1.6 monospace;text-transform:uppercase;color:var(--ink);background:var(--soft);white-space:nowrap}td,th{text-align:right;padding:13px 16px;border-bottom:1px solid var(--line)}td:first-child,th:first-child{text-align:left}tbody tr:last-child td{border:0}tr.selected td{background:#1c3946;color:#d6f5ee}td .bar{display:inline-block;vertical-align:middle;height:5px;background:var(--ink);margin-left:8px;max-width:60px}caption{caption-side:bottom;text-align:left;font-size:11px;padding:12px 16px;color:var(--muted);background:var(--deep)}.theory td,.theory th{text-align:left;vertical-align:top}.theory td:first-child{color:var(--ink);min-width:135px}.theory{min-width:690px}.callout{background:var(--soft);border-radius:6px;padding:22px 26px;margin-top:23px}.callout p{font-size:14px}.callout h3{margin-top:0}.readout{font-size:13px;margin-top:20px}.readout b{color:#b6f4e8;font-weight:500}.section-rule{border-top:1px solid var(--line);margin-top:48px}.steps{counter-reset:step;display:grid;grid-template-columns:repeat(3,1fr);gap:25px}.steps article{border-top:1px solid var(--line);padding-top:17px}.steps article:before{counter-increment:step;content:'0' counter(step);font:11px monospace}.steps p{font-size:13px}.formula-box{background:var(--deep);border-radius:4px;padding:15px 18px;font:13px/1.9 monospace;color:#c1dce5;margin:16px 0;overflow-wrap:anywhere}.source-list{display:grid;grid-template-columns:1fr 1fr;gap:25px;margin-top:22px}.source-list a{display:block;padding:16px 0;border-bottom:1px solid var(--line);font-size:13px}.source-list small{display:block;color:var(--muted);font-size:11px;margin-top:4px}details{border-top:1px solid var(--line);padding-top:16px;margin-top:20px}summary{cursor:pointer;font-size:13px}details p,details li{font-size:13px;color:var(--muted)}pre{overflow:auto;background:var(--deep);border-radius:4px;padding:20px;color:#b8d8e5;font:12px/1.8 monospace}footer{padding:30px 35px;margin-top:65px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:20px;color:var(--muted);font-size:11px}[hidden]{display:none!important}.error{color:var(--red)!important}.skip{position:absolute;left:-9999px}.skip:focus{left:15px;top:15px;background:var(--panel);padding:10px;z-index:10}
+@media(min-width:1500px){canvas{height:250px}}@media(max-width:1050px){.control-grid{grid-template-columns:repeat(3,1fr)}.hero{gap:35px}.plots .card{padding:15px 12px}.metrics strong{font-size:14px}nav{gap:15px}}@media(max-width:760px){header{padding:20px}.badge{display:none}main{padding:0 20px}.hero{grid-template-columns:1fr;padding:40px 0;gap:30px}.hero-visual{min-height:265px;border-radius:100px 100px 8px 8px}.hero-formula{font-size:56px}h1{letter-spacing:-2.4px;font-size:58px}.strip{grid-template-columns:1fr 1fr;gap:18px}.strip>div:nth-child(3){border:0;padding:0}.section-head{display:block}.section-head>p{margin-top:18px}.grid3,.grid2,.steps,.source-list{grid-template-columns:1fr}section{padding-top:48px}h2{font-size:35px}.control-grid{grid-template-columns:1fr 1fr;gap:16px;padding:18px}.control-actions{padding:16px 18px}.horizon{gap:10px;padding:14px;flex-wrap:wrap}.horizon label{width:100%}.horizon output{min-width:70px}.subhead{align-items:start}.subhead span{max-width:150px;text-align:right}.plots canvas{height:250px}.metrics strong{font-size:18px}.source-list{gap:0}.card{padding:20px}.result-heading{align-items:start}.result-heading p{max-width:100%}.result-heading .badge{display:none}footer{padding:25px 20px;flex-wrap:wrap}nav a:nth-child(2),nav a:nth-child(4){display:none}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.progress>div{transition:none}}@media print{body{background:white;color:#123}header nav,.controls,.horizon,.control-actions,footer button{display:none}.card,.notice,.callout,table,th,caption{background:#f1f5f6;color:#123}.card p,p,.note,.muted,td{color:#234}main,header,footer{max-width:none;padding:0}section{padding-top:25px}.hero{padding:20px 0}.hero-visual{display:none}.hero{grid-template-columns:1fr}.grid3{grid-template-columns:repeat(3,1fr)}.equation,.metrics strong{color:#123}a{color:#135}canvas{break-inside:avoid}.section-head{break-after:avoid}h1{font-size:40px}}
+
+.hero-visual{border-radius:140px 140px 8px 8px;min-height:360px}.hero-formula{font-size:44px;letter-spacing:-1px}.hero-micro{text-align:center;color:var(--muted);font:11px/2 monospace;margin-top:23px}.hero-visual svg{height:85px;margin-top:18px}.control-grid{grid-template-columns:1fr 1fr 1fr}.equation{font:20px/1.8 Georgia,serif;letter-spacing:.1px}.math{font-family:Georgia,serif;color:#c1dce5}.derivation{display:grid;grid-template-columns:40px 1fr;gap:14px;margin-top:24px}.step-num{font:12px monospace;color:var(--gold);padding-top:5px}.derivation p{font-size:14px}.derivation h3{margin-top:0}.derivation .formula-box{font:17px/2 Georgia,serif}.formula-box sup,.formula-box sub{font-size:72%}.core{font-size:16px;line-height:2.2;padding:24px;border-left:3px solid var(--ink)}.core code{white-space:pre}.code-label{display:flex;justify-content:space-between;align-items:center;font:11px monospace}.code-label button{padding:5px 11px;font-size:11px}.theory-pill{font:11px monospace;color:var(--gold);border:1px solid var(--line);padding:8px 12px;border-radius:20px;display:inline-block}.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin:22px 0}.kpi{padding:19px;background:var(--panel);border:1px solid var(--line);border-radius:6px}.kpi span{font:10px/1.6 monospace;color:var(--muted);display:block}.kpi strong{display:block;font:28px/1.7 Georgia,serif;color:var(--light)}.kpi small{font:10px/1.8 monospace;color:var(--gold)}.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.chart-grid .card{padding:20px}.chart-grid h3{font-size:23px}.chart-grid p{font-size:12px}.spread canvas{height:280px}.mono{font-family:monospace}.check-table th,.check-table td{font-size:11px;padding:10px 13px}.distribution{display:flex;align-items:end;justify-content:space-between;gap:8px;height:105px;padding:10px 0 0}.distribution div{height:80px;background:linear-gradient(#69d6ca,#166454);flex:1;text-align:center;position:relative}.distribution div span{position:absolute;bottom:-24px;left:0;right:0;font:10px monospace;color:var(--muted)}.distribution-wrap{padding-bottom:27px}.outcome{margin-top:20px;color:#b8d8e5;font-size:14px}.outcome p{color:inherit}.result-heading p{max-width:100%}button.selected{background:var(--soft);border-color:var(--ink)}.math-line{display:block;padding:7px 0;overflow-wrap:anywhere}.spacer{margin-top:22px}.grid2>.card{height:100%}.comparison th{white-space:normal}.comparison{min-width:850px}.highlight{color:var(--gold)}.inspection{display:flex;align-items:center;gap:12px}.inspection select{width:130px}.inspection label{margin:0;white-space:nowrap}.hint{font-size:12px;color:var(--muted)}.error-box{color:var(--red);margin-left:auto}footer .brand{font-size:12px}.step-list{padding-left:20px;color:var(--muted);font-size:14px}.step-list li{margin-bottom:12px}button:focus-visible,summary:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
+@media(max-width:760px){.kpi-grid{grid-template-columns:1fr 1fr}.chart-grid{grid-template-columns:1fr}.control-grid{grid-template-columns:1fr}.hero-formula{font-size:36px}.derivation{grid-template-columns:25px 1fr;gap:8px}.core{font-size:12px;padding:14px}.hero-visual{min-height:280px}.section-head .inspection{margin-top:18px}.kpi strong{font-size:25px}.chart-grid canvas{height:255px}nav a{display:block!important}nav a:nth-child(3){display:none!important}.result-heading{flex-wrap:wrap}.hero{gap:25px}h1{font-size:52px}.formula-box{overflow-x:auto}}
+@media print{.chart-grid{grid-template-columns:1fr 1fr}.kpi-grid{grid-template-columns:repeat(4,1fr)}.kpi{background:#eef4f4}.kpi strong,.equation,.math,.math-line{color:#234}pre,.formula-box{background:#eef4f4;color:#123}.inspection,.code-label button{display:none}.derivation,.card{break-inside:avoid}.hero-visual{display:none}.outcome{color:#234}nav{display:none}}
+</style>
+</head>
+<body>
+<a class="skip" href="#experiment">Skip to the experiment</a>
+<header><a class="brand" href="#">◈ STATISTICS<span>LAB</span></a><nav aria-label="Main navigation"><a href="#recurrence">Recurrences</a><a href="#experiment">Experiment</a><a href="#conclusions">Conclusions</a></nav><span class="badge">HOMEWORK 05 / SAMPLING THEORY</span></header>
+<main>
+<div class="hero"><div><div class="eyebrow">ONLINE MOMENTS · SAMPLING DISTRIBUTIONS</div><h1>One score at a time.<br><em>A clearer estimate.</em></h1><p class="intro">Derive Welford’s formulas, reduce the update to three lines, and follow independent hackers as their estimates settle around the same population moments.</p><a class="button primary" href="#experiment">Explore the experiment <span>↘</span></a></div><div class="hero-visual" role="img" aria-label="Online estimation: new observations update the mean and sum of squared deviations"><div class="eyebrow">ONE PASS · CONSTANT MEMORY</div><div class="hero-formula">δ = x − x̄<br>SS ← SS + δ(x − x̄<sub>new</sub>)</div><svg viewBox="0 0 400 85" aria-hidden="true"><path d="M0 45H400" stroke="#e3bc7e" stroke-dasharray="4 6"/><path d="M0 10 25 67 50 20 75 56 100 32 125 51 150 38 175 49 200 41 225 48 250 43 275 47 300 44 325 46 350 44 375 46 400 45" fill="none" stroke="#69d6ca" stroke-width="2"/></svg><div class="hero-micro">OBSERVE → UPDATE → ESTIMATE</div></div></div>
+<div class="strip"><div><strong>3 lines</strong><span>the complete online update</span></div><div><strong>0–10</strong><span>a fixed score distribution</span></div><div><strong>μ = 5</strong><span>the population mean</span></div><div><strong>σ² = 10</strong><span>the population variance</span></div></div>
+<section id="recurrence"><div class="section-head"><div><div class="eyebrow">EXERCISE 01 / DERIVE & IMPLEMENT</div><h2>From the mean<br>to the sum of squares.</h2></div><p>The same idea behind Knuth’s running mean extends to the second central moment: update the previous state using only the new observation.</p></div>
+<div class="notice"><strong>Notation.</strong> For observations x₁, …, x<sub>k</sub>, let x̄<sub>k</sub> be their mean and SS<sub>k</sub> = ∑<sub>i=1</sub><sup>k</sup>(x<sub>i</sub> − x̄<sub>k</sub>)². SS is an <em>unnormalized central sum of squares</em>, also called M₂; it is neither ∑xᵢ² nor a variance until divided by a denominator.</div>
+<div class="derivation"><div class="step-num">01</div><article><h3>Start with Knuth’s mean recurrence.</h3><p>Write the previous sum as (k − 1)x̄<sub>k−1</sub>, add the incoming observation, and divide by k. The difference δ<sub>k</sub> measures how far the new score lies from the previous mean.</p><div class="formula-box">δ<sub>k</sub> = x<sub>k</sub> − x̄<sub>k−1</sub><br>x̄<sub>k</sub> = [(k − 1)x̄<sub>k−1</sub> + x<sub>k</sub>]/k = x̄<sub>k−1</sub> + δ<sub>k</sub>/k</div><p>At k = 1, initialize x̄₀ = 0 and SS₀ = 0; the update gives x̄₁ = x₁ and SS₁ = 0.</p></article></div>
+<div class="derivation"><div class="step-num">02</div><article><h3>Recenter the previous observations.</h3><p>For k ≥ 2, the new mean shifts the center by δ<sub>k</sub>/k. Expand the squares for the first k − 1 observations. Their residuals about the old mean sum to zero, so the cross term disappears.</p><div class="formula-box">SS<sub>k</sub> = ∑<sub>i=1</sub><sup>k−1</sup>[(x<sub>i</sub> − x̄<sub>k−1</sub>) − δ<sub>k</sub>/k]² + (x<sub>k</sub> − x̄<sub>k</sub>)²<br>∑<sub>i=1</sub><sup>k−1</sup>(x<sub>i</sub> − x̄<sub>k−1</sub>) = 0<br>SS<sub>k</sub> = SS<sub>k−1</sub> + (k − 1)δ<sub>k</sub>²/k² + (x<sub>k</sub> − x̄<sub>k</sub>)²</div></article></div>
+<div class="derivation"><div class="step-num">03</div><article><h3>Combine the two correction terms.</h3><p>The new residual is x<sub>k</sub> − x̄<sub>k</sub> = (k − 1)δ<sub>k</sub>/k. Substituting it yields Welford’s recurrence.</p><div class="formula-box">SS<sub>k</sub> = SS<sub>k−1</sub> + [(k − 1) + (k − 1)²]δ<sub>k</sub>²/k²<br>SS<sub>k</sub> = SS<sub>k−1</sub> + [(k − 1)/k]δ<sub>k</sub>²<br><strong>SS<sub>k</sub> = SS<sub>k−1</sub> + δ<sub>k</sub>(x<sub>k</sub> − x̄<sub>k</sub>)</strong></div></article></div>
+<div class="grid2 spacer"><article class="card"><div class="eyebrow">DESCRIPTIVE VARIANCE / DIVIDE BY k</div><h3>The second empirical central moment.</h3><div class="equation">v<sub>k</sub> = SS<sub>k</sub>/k<br>v<sub>k</sub> = [(k − 1)/k]v<sub>k−1</sub><br>+ [(k − 1)/k²]δ<sub>k</sub>²</div><p>Use v₁ = 0; the recurrence applies for k ≥ 2. This describes the observed scores, but as an estimator of an unknown population variance it is biased downward: E[v<sub>k</sub>] = [(k − 1)/k]σ².</p></article><article class="card"><div class="eyebrow">UNBIASED SAMPLE VARIANCE / DIVIDE BY k − 1</div><h3>Bessel’s correction.</h3><div class="equation">s<sub>k</sub>² = SS<sub>k</sub>/(k − 1)<br>s<sub>k</sub>² = [(k − 2)/(k − 1)]s<sub>k−1</sub>²<br>+ δ<sub>k</sub>²/k</div><p>The direct recurrence applies for k ≥ 3, with s₂² = (x₂ − x₁)²/2. Computing from SS works for every k ≥ 2. Sample variance is undefined for k &lt; 2. Throughout Exercise 2, “sampling variance” means this unbiased estimator.</p></article></div>
+<div class="section-head spacer"><h3>The core update, in three lines.</h3><span class="theory-pill">O(1) storage · O(n) time</span></div>
+<div class="code-label"><span>JAVASCRIPT / INSIDE THE OBSERVATION LOOP</span><button type="button" id="copy">Copy code</button></div><pre class="core"><code id="core-code">const delta = x - mean;
+mean += delta / ++n;
+M2 += delta * (x - mean);</code></pre>
+<p class="hint">Initialize n = 0, mean = 0, M2 = 0. The second line increments the observation count before division. The last line must use the <em>updated</em> mean. Return M2 / (n − 1) for the unbiased variance when n ≥ 2.</p>
+<details><summary>Complete reusable function</summary><pre><code>function welford(values) {
+  let n = 0, mean = 0, M2 = 0;
+  for (const x of values) {
+    const delta = x - mean;
+    mean += delta / ++n;
+    M2 += delta * (x - mean);
+  }
+  return {
+    count: n,
+    mean: n ? mean : null,
+    SS: M2,
+    variance: n > 1 ? M2 / (n - 1) : null
+  };
+}</code></pre></details>
+<div class="notice"><strong>Why this update is useful.</strong> It needs no stored history and avoids subtracting the potentially very large quantities ∑xᵢ² and n·x̄². This usually gives better floating-point behavior, although it does not eliminate rounding error.</div>
+<details><summary>A hand-checkable example: 2, 4, 6</summary><div class="table-wrap spacer"><table class="check-table"><thead><tr><th>k</th><th>x<sub>k</sub></th><th>δ<sub>k</sub></th><th>New mean</th><th>New SS</th><th>s<sub>k</sub>²</th></tr></thead><tbody><tr><td>1</td><td>2</td><td>2</td><td>2</td><td>0</td><td>Undefined</td></tr><tr><td>2</td><td>4</td><td>2</td><td>3</td><td>2</td><td>2</td></tr><tr><td>3</td><td>6</td><td>3</td><td>4</td><td>8</td><td>4</td></tr></tbody></table></div><p>The final SS is (2 − 4)² + (4 − 4)² + (6 − 4)² = 8, so the unbiased sample variance is 8/2 = 4.</p></details>
+</section>
+<section id="model"><div class="section-head"><div><div class="eyebrow">EXERCISE 02 / A FIXED SCORE MODEL</div><h2>Eleven possible scores.<br>One population.</h2></div><p>Each hacker receives one score per system. All scores are independent and identically distributed, within and across hackers.</p></div>
+<div class="grid2"><article class="card"><h3>Discrete uniform on {0, …, 10}.</h3><p>Let X<sub>j,i</sub> be the score of hacker j on system i. Every integer from 0 through 10 has probability 1/11. This single distribution stays fixed across all experiments.</p><div class="distribution-wrap"><div class="distribution" role="img" aria-label="Eleven equally high probability bars, one for each integer score from 0 to 10; probability 1/11 per score"><div><span>0</span></div><div><span>1</span></div><div><span>2</span></div><div><span>3</span></div><div><span>4</span></div><div><span>5</span></div><div><span>6</span></div><div><span>7</span></div><div><span>8</span></div><div><span>9</span></div><div><span>10</span></div></div></div><p class="note">P(X = r) = 1/11 for r ∈ {0, …, 10}; zero otherwise.</p></article><article class="card"><h3>Calculate the population moments.</h3><div class="equation">μ = (0 + 1 + ⋯ + 10)/11 = 5<br>E[X²] = (0² + 1² + ⋯ + 10²)/11 = 35<br>σ² = E[X²] − μ² = 35 − 25 = 10<br>μ₄ = E[(X − 5)⁴] = 178</div><p>The fourth central moment μ₄ lets us compute the exact theoretical variability of the sample variance. Scores quantify a simulated outcome; they do not contact or test real systems.</p></article></div>
+<div class="notice"><strong>Two levels of averaging.</strong> Each hacker j produces x̄<sub>j,n</sub> and s<sub>j,n</sub>² from n scores. Across m hackers, compare A<sub>n</sub> = (1/m)∑<sub>j=1</sub><sup>m</sup>x̄<sub>j,n</sub> with μ and B<sub>n</sub> = (1/m)∑<sub>j=1</sub><sup>m</sup>s<sub>j,n</sub>² with σ². The spread of the m individual estimates is a different quantity from either average.</div>
+</section>
+<section id="experiment"><div class="section-head"><div><div class="eyebrow">SIMULATION / REPRODUCE · INSPECT · COMPARE</div><h2>The sampling bench.</h2></div><p>Generate paths once. Inspect several values of n using prefixes of those same paths, then compare the estimates with their exact theoretical targets.</p></div>
+<form id="controls" class="controls"><div class="control-grid"><div><label for="nmax">Maximum systems per hacker</label><select id="nmax"><option>100</option><option>300</option><option selected>1000</option><option>3000</option><option>10000</option></select></div><div><label for="m">Hackers m</label><select id="m"><option>100</option><option>500</option><option selected>2000</option><option>5000</option></select></div><div><label for="seed">Random seed</label><input id="seed" type="number" value="2026" min="0" max="4294967295" step="1" required></div></div><div class="control-actions"><button id="run" class="primary" type="submit">Run experiment ↗</button><button id="new-seed" type="button">New seed & run</button><p id="status" role="status" aria-live="polite">Preparing the first experiment…</p><button id="export" type="button" disabled>Export CSV ↓</button></div><div class="progress" role="progressbar" aria-label="Simulation progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="progress"></div></div></form>
+<noscript><div class="notice">Enable JavaScript for the interactive simulation. All derivations and theoretical conclusions remain readable.</div></noscript>
+<div id="results" hidden>
+<div class="result-heading"><p id="run-description"></p><div class="inspection"><label for="inspect">Inspect systems n</label><select id="inspect"></select></div></div>
+<div class="kpi-grid"><div class="kpi"><span>AVERAGE SAMPLE MEAN Aₙ</span><strong id="avg-mean">—</strong><small>Target μ = 5</small></div><div class="kpi"><span>AVERAGE SAMPLE VARIANCE Bₙ</span><strong id="avg-var">—</strong><small>Target σ² = 10</small></div><div class="kpi"><span>SD OF SAMPLE MEANS</span><strong id="sd-mean">—</strong><small id="sd-mean-theory"></small></div><div class="kpi"><span>SD OF SAMPLE VARIANCES</span><strong id="sd-var">—</strong><small id="sd-var-theory"></small></div></div>
+<div class="legend"><span><i></i>Simulated estimates</span><span><i class="gold"></i>Population target</span><span>First 16 hackers shown in path plots</span></div>
+<div class="chart-grid"><article class="card"><h3>Running sample means</h3><canvas id="mean-path" role="img" aria-label="Running sample means across systems"></canvas><p>Each curve is x̄<sub>j,k</sub>. The gold line is μ = 5.</p></article><article class="card"><h3>Running sample variances</h3><canvas id="var-path" role="img" aria-label="Running unbiased sample variances across systems"></canvas><p>Each curve is s<sub>j,k</sub>². The gold line is σ² = 10; k starts at 2.</p></article><article class="card"><h3>Distribution of sample means</h3><canvas id="mean-hist" role="img" aria-label="Histogram of sample means"></canvas><p id="mean-hist-note"></p></article><article class="card"><h3>Distribution of sample variances</h3><canvas id="var-hist" role="img" aria-label="Histogram of sample variances"></canvas><p id="var-hist-note"></p></article></div>
+<div class="notice outcome" id="run-reading" aria-live="polite"></div>
+<div class="subhead"><h3>Longer paths, tighter estimates.</h3><span>All checkpoints from the current run</span></div>
+<div class="chart-grid spread"><article class="card"><h3>Spread of sample means</h3><canvas id="mean-spread" role="img" aria-label="Empirical and theoretical standard deviation of sample means versus n"></canvas><p>Exact SD(x̄<sub>n</sub>) = √(10/n).</p></article><article class="card"><h3>Spread of sample variances</h3><canvas id="var-spread" role="img" aria-label="Empirical and theoretical standard deviation of unbiased sample variances versus n"></canvas><p>Exact SD(s<sub>n</sub>²) = √{[78 + 200/(n − 1)]/n}.</p></article></div>
+<div class="legend"><span><i></i>Empirical SD across m hackers</span><span><i class="gold"></i>Exact theoretical SD</span><span>Logarithmic horizontal axes · linear vertical axes</span></div>
+<div class="table-wrap"><table class="comparison" id="comparison"><caption>SDs use denominator m − 1 across hackers. SE(Aₙ) and SE(Bₙ) are theoretical Monte Carlo standard errors of the two averages. Rows share path prefixes and are correlated across n.</caption><thead><tr><th>Systems n</th><th>Avg. mean<br>target 5</th><th>Avg. variance<br>target 10</th><th>SD(means)<br>emp. / theory</th><th>SD(variances)<br>emp. / theory</th><th>SE(Aₙ)</th><th>SE(Bₙ)</th><th>Avg. SS/n<br>biased</th></tr></thead><tbody></tbody></table></div>
+<div class="callout"><h3 id="bias-heading">The denominator matters.</h3><p id="bias-reading"></p></div>
+</div></section>
+<section id="theory"><div class="section-head"><div><div class="eyebrow">EXACT BENCHMARKS / UNDER THE IID MODEL</div><h2>What should the<br>experiment converge to?</h2></div><p>These identities distinguish unbiasedness, concentration of individual estimates, and precision of their Monte Carlo averages.</p></div>
+<div class="table-wrap"><table class="theory"><thead><tr><th>Quantity</th><th>Expectation</th><th>Variance</th></tr></thead><tbody><tr><td>One hacker’s x̄<sub>n</sub></td><td>μ = 5</td><td>σ²/n = 10/n</td></tr><tr><td>One hacker’s s<sub>n</sub>²</td><td>σ² = 10, n ≥ 2</td><td>[μ₄ − ((n − 3)/(n − 1))σ⁴]/n<br>= [78 + 200/(n − 1)]/n</td></tr><tr><td>A<sub>n</sub>: average of m means</td><td>μ = 5</td><td>σ²/(mn) = 10/(mn)</td></tr><tr><td>B<sub>n</sub>: average of m variances</td><td>σ² = 10</td><td>[78 + 200/(n − 1)]/(mn)</td></tr><tr><td>v<sub>n</sub> = SS<sub>n</sub>/n</td><td>((n − 1)/n)σ²</td><td>((n − 1)/n)² Var(s<sub>n</sub>²)</td></tr></tbody></table></div>
+<p class="note">Here σ⁴ means (σ²)² = 100. The variance formula for s² is valid for iid observations with a finite fourth moment; no normal population assumption is used.</p>
+<div class="grid2 spacer"><article class="card"><h3>Why divide by n − 1?</h3><p>Use SS<sub>n</sub> = ∑(Xᵢ − μ)² − n(x̄<sub>n</sub> − μ)². Taking expectations gives nσ² − n(σ²/n) = (n − 1)σ². Therefore E[SS<sub>n</sub>/(n − 1)] = σ².</p><p>Estimating the unknown center from the sample consumes one degree of freedom: the n deviations from x̄ sum to zero.</p></article><article class="card"><h3>Why does the sample variance stabilize?</h3><p>For this distribution, Var(s<sub>n</sub>²) = 78/n + 200/[n(n − 1)], which tends to zero. Together with E[s<sub>n</sub>²] = 10, this proves mean-square consistency and hence convergence in probability.</p><p>As n grows, SD(x̄<sub>n</sub>) ≈ √10/√n and SD(s<sub>n</sub>²) ≈ √78/√n. Multiplying n by four approximately halves both spreads for large n.</p></article></div>
+<details><summary>How the simulation is organized</summary><ol class="step-list"><li>For each hacker j = 1, …, m, generate n<sub>max</sub> pseudorandom scores as floor(11U), with U in [0, 1). A seeded generator makes the run reproducible.</li><li>Apply the three-line Welford update to every score. At n = 2, 5, 10, 30, 100, 300, 1000, 3000 and 10000, retain the mean and SS/(n − 1), up to the chosen maximum.</li><li>At each checkpoint, average the m means and the m unbiased variances. Measure each estimator’s empirical SD across the hackers with denominator m − 1.</li><li>Compare with the exact expectations and SDs in the table. Different rows reuse prefixes of the same trajectories; hackers remain independent in the statistical model.</li><li>Retain at most 16 thinned trajectories for drawing. The numerical summaries use all m hackers and all observations, regardless of the plotting resolution.</li></ol><p>The seeded pseudorandom generator approximates iid sampling; the theory assumes ideal independent draws. This is a statistical simulation rather than a model of adaptive attackers or heterogeneous real defenses.</p></details>
+</section>
+<section id="conclusions"><div class="section-head"><div><div class="eyebrow">INTERPRETATION / ANSWERS TO EXERCISE 02</div><h2>Unbiased at every n.<br>More precise as n grows.</h2></div><p>A single experiment fluctuates. The theoretical expectations explain the targets; the sampling variances explain the size of the fluctuations.</p></div>
+<div class="steps"><article><h3>Compare the two averages.</h3><p>A<sub>n</sub> should be near 5 and B<sub>n</sub> near 10. Both are unbiased for every n ≥ 2, so increasing n does not correct a bias in these estimators. Their realized errors need not decrease monotonically in a particular run.</p></article><article><h3>Increase the systems n.</h3><p>Every hacker has more observations. Both the sample means and sample variances become less variable across hackers; their histograms concentrate around 5 and 10. The sample variance need not have a symmetric or normal distribution at small n.</p></article><article><h3>Increase the hackers m.</h3><p>At fixed n, the distribution of an individual estimate stays the same. More replications reveal that distribution more clearly and reduce the standard errors of A<sub>n</sub> and B<sub>n</sub> by a factor proportional to 1/√m.</p></article></div>
+<div class="grid2 spacer"><article class="card"><h3>Why this matters for inference.</h3><p>Usually μ and σ² are unknown: we only observe a sample. Unbiasedness tells us the estimators hit the correct targets on average; consistency tells us more data make them concentrate around those targets.</p><p>The estimated standard error s/√n quantifies uncertainty in a sample mean. For sufficiently large n, the CLT motivates the approximate interval x̄ ± 1.96s/√n for μ. Its finite-sample coverage is approximate here because the scores are discrete uniform.</p></article><article class="card"><h3>What the simulation can establish.</h3><p>Here the population moments are known, so the experiment checks the behavior predicted by the formulas. Agreement is empirical evidence, while the expectation and variance identities provide the mathematical justification.</p><p>Averaging sample variances estimates the population score variance. It does <em>not</em> estimate the variance of the sample mean: that is σ²/n. Confusing these quantities would overstate uncertainty by a factor n in variance.</p></article></div>
+<div class="callout"><h3>The practical result.</h3><p>Welford’s update provides both estimates in a single pass with constant storage. Bessel’s correction makes the sample variance unbiased. Larger n improves each hacker’s estimates; larger m improves the precision with which the experiment describes their sampling distributions.</p></div>
+</section>
+</main>
+<footer><a class="brand" href="#">◈ STATISTICS<span>LAB</span></a><span>Homework 05 · Welford’s recurrences & sampling moments</span><span>Single file · Offline · Reproducible</span></footer>
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const C = {ink:'#69d6ca',muted:'#9dbbc5',line:'#2d4054',gold:'#e3bc7e',light:'#d6e9ee'};
+let result = null, busy = false;
+function mulberry32(seed) {
+  let a = seed >>> 0;
+  return function() {
+    a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), a | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+function welford(values) {
+  let n = 0, mean = 0, M2 = 0;
+  for (const x of values) {
+    const delta = x - mean;
+    mean += delta / ++n;
+    M2 += delta * (x - mean);
+  }
+  return {count:n,mean:n?mean:null,SS:M2,variance:n>1?M2/(n-1):null};
+}
+const checkpoints = max => [2,5,10,30,100,300,1000,3000,10000].filter(k=>k<=max);
+const varianceOfS2 = n => (78 + 200/(n-1))/n;
+const fmt = v => Number.isFinite(v) ? Math.abs(v)>0&&Math.abs(v)<.0001 ? v.toExponential(3) : v.toFixed(4) : 'Undefined';
+const axis = v => Math.abs(v)<1e-10?'0':Math.abs(v)>=1000?(v/1000).toPrecision(2)+'k':Number(v.toPrecision(3)).toString();
+const pause = () => new Promise(resolve=>setTimeout(resolve,0));
+async function simulate(q,onProgress=()=>{}) {
+  const random = mulberry32(q.seed), ks = checkpoints(q.nmax);
+  const snapshots = ks.map(n=>({n,means:new Float64Array(q.m),variances:new Float64Array(q.m)}));
+  const plotSteps = [...new Set([1,2,...ks,...Array.from({length:250},(_,i)=>Math.round(Math.exp(i*Math.log(q.nmax)/249)))])].filter(k=>k<=q.nmax).sort((a,b)=>a-b);
+  const paths = [], batch = Math.max(1,Math.floor(150000/q.nmax));
+  for(let j=0;j<q.m;j++) {
+    let n=0, mean=0, M2=0, c=0, t=0;
+    const path = j<16 ? {means:[],variances:[]} : null;
+    for(let i=1;i<=q.nmax;i++) {
+      const x = Math.floor(random()*11);
+      const delta = x - mean;
+      mean += delta / ++n;
+      M2 += delta * (x - mean);
+      if(n===ks[c]) {
+        snapshots[c].means[j]=mean;
+        snapshots[c].variances[j]=M2/(n-1);
+        c++;
+      }
+      if(path&&n===plotSteps[t]) {
+        path.means.push(mean);
+        path.variances.push(n>1?M2/(n-1):null);
+        t++;
+      }
+    }
+    if(path)paths.push(path);
+    if((j+1)%batch===0||j===q.m-1) {onProgress((j+1)/q.m);await pause();}
+  }
+  for(const s of snapshots) {
+    const a=welford(s.means), b=welford(s.variances);
+    Object.assign(s,{avgMean:a.mean,avgVariance:b.mean,sdMean:Math.sqrt(a.variance),sdVariance:Math.sqrt(b.variance),theoryMeanSD:Math.sqrt(10/s.n),theoryVarianceSD:Math.sqrt(varianceOfS2(s.n)),seA:Math.sqrt(10/(s.n*q.m)),seB:Math.sqrt(varianceOfS2(s.n)/q.m)});
+  }
+  return {...q,ks,snapshots,plotSteps,paths};
+}
+function frame(id,xmin,xmax,ymin,ymax,xLabel,yLabel,logX=false) {
+  const el=$(id), rect=el.getBoundingClientRect(), w=rect.width||460,h=rect.height||250,dpr=Math.min(window.devicePixelRatio||1,2);
+  el.width=Math.round(w*dpr);el.height=Math.round(h*dpr);
+  const g=el.getContext('2d');g.scale(dpr,dpr);
+  const b={l:49,r:w-13,t:24,b:h-40};
+  if(!(xmax>xmin)){xmin-=.5;xmax+=.5;}
+  if(!(ymax>ymin)){ymin-=.5;ymax+=.5;}
+  const tx=v=>logX?Math.log10(v):v,lo=tx(xmin),hi=tx(xmax);
+  const x=v=>b.l+(tx(v)-lo)/(hi-lo)*(b.r-b.l), y=v=>b.b-(v-ymin)/(ymax-ymin)*(b.b-b.t);
+  g.font='10px monospace';g.lineWidth=1;
+  for(let i=0;i<=4;i++) {
+    const v=ymin+i*(ymax-ymin)/4, yy=y(v),xx=b.l+i*(b.r-b.l)/4;
+    g.strokeStyle=C.line;g.beginPath();g.moveTo(b.l,yy);g.lineTo(b.r,yy);g.stroke();
+    g.fillStyle=C.muted;g.textAlign='right';g.fillText(axis(v),b.l-7,yy+3);
+    g.textAlign='center';g.fillText(axis(logX?10**(lo+i*(hi-lo)/4):xmin+i*(xmax-xmin)/4),xx,b.b+17);
+  }
+  g.fillStyle=C.muted;g.textAlign='left';g.fillText(yLabel,b.l,12);g.textAlign='right';g.fillText(xLabel,b.r,h-4);
+  return {g,x,y,b,w,h,xmin,xmax,ymin,ymax};
+}
+function clip(f,draw) {const {g,b}=f;g.save();g.beginPath();g.rect(b.l,b.t,b.r-b.l,b.b-b.t);g.clip();draw();g.restore();}
+function line(f,pts,color,width=1.5,dash=[]) {
+  const {g,x,y}=f;g.strokeStyle=color;g.lineWidth=width;g.setLineDash(dash);g.beginPath();
+  pts.forEach(([a,b],i)=>i?g.lineTo(x(a),y(b)):g.moveTo(x(a),y(b)));g.stroke();g.setLineDash([]);
+}
+function plotPath(type,n) {
+  const target=type==='means'?5:10,start=type==='means'?1:2;
+  const indices=result.plotSteps.map((k,i)=>({k,i})).filter(o=>o.k>=start&&o.k<=n);
+  const pts=result.paths.map(p=>indices.map(({k,i})=>[k,p[type][i]]));
+  let max=target,min=target;
+  for(const p of pts)for(const [,v]of p){max=Math.max(max,v);min=Math.min(min,v);}
+  const pad=(max-min||1)*.09;
+  const f=frame(type==='means'?'mean-path':'var-path',start,n,Math.max(0,min-pad),max+pad,'systems k · log',type==='means'?'sample mean':'sample variance',true);
+  clip(f,()=>{pts.forEach((p,j)=>{const color=j===0?C.ink:`hsla(${166+j*3},40%,${55+j%4*5}%,.28)`;line(f,p,color,j===0?1.8:1);if(p.length===1){f.g.fillStyle=color;f.g.beginPath();f.g.arc(f.x(p[0][0]),f.y(p[0][1]),3,0,Math.PI*2);f.g.fill();}});line(f,[[f.xmin,target],[f.xmax,target]],C.gold,1.8,[5,4]);});
+}
+function histogram(id,values,target,label) {
+  let lo=target,hi=target;for(const v of values){lo=Math.min(lo,v);hi=Math.max(hi,v);}
+  const pad=(hi-lo||1)*.08;lo=Math.max(0,lo-pad);hi+=pad;
+  const count=24,width=(hi-lo)/count,bins=new Uint32Array(count);
+  for(const v of values)bins[Math.min(count-1,Math.max(0,Math.floor((v-lo)/width)))]++;
+  const top=Math.max(...bins)/values.length*1.15;
+  const f=frame(id,lo,hi,0,top,label,'relative frequency');
+  clip(f,()=>{for(let i=0;i<count;i++){const a=f.x(lo+i*width),b=f.x(lo+(i+1)*width);f.g.fillStyle='rgba(105,214,202,.65)';f.g.fillRect(a+.7,f.y(bins[i]/values.length),Math.max(.5,b-a-1.4),f.y(0)-f.y(bins[i]/values.length));}line(f,[[target,0],[target,top]],C.gold,2,[5,4]);});
+}
+function spread(id,emp,theory) {
+  const ss=result.snapshots, max=Math.max(...ss.flatMap(s=>[s[emp],s[theory]]))*1.13;
+  const f=frame(id,ss[0].n,result.nmax,0,max,'systems n · log','standard deviation',true);
+  clip(f,()=>{line(f,ss.map(s=>[s.n,s[theory]]),C.gold,1.8,[5,4]);line(f,ss.map(s=>[s.n,s[emp]]),C.ink,2);for(const s of ss){f.g.fillStyle=C.ink;f.g.beginPath();f.g.arc(f.x(s.n),f.y(s[emp]),3,0,Math.PI*2);f.g.fill();}});
+}
+function render() {
+  if(!result)return;
+  const n=+$('inspect').value,s=result.snapshots.find(v=>v.n===n);
+  $('avg-mean').textContent=fmt(s.avgMean);$('avg-var').textContent=fmt(s.avgVariance);
+  $('sd-mean').textContent=fmt(s.sdMean);$('sd-var').textContent=fmt(s.sdVariance);
+  $('sd-mean-theory').textContent='Theory '+fmt(s.theoryMeanSD);$('sd-var-theory').textContent='Theory '+fmt(s.theoryVarianceSD);
+  plotPath('means',n);plotPath('variances',n);
+  histogram('mean-hist',s.means,5,'sample mean');histogram('var-hist',s.variances,10,'sample variance');
+  $('mean-hist-note').textContent=`${result.m.toLocaleString('en-US')} sample means at n = ${n}; empirical SD ${fmt(s.sdMean)}, theoretical SD ${fmt(s.theoryMeanSD)}. The bins cover this checkpoint’s observed range.`;
+  $('var-hist-note').textContent=`${result.m.toLocaleString('en-US')} sample variances at n = ${n}; empirical SD ${fmt(s.sdVariance)}, theoretical SD ${fmt(s.theoryVarianceSD)}. Histogram axes rescale at each checkpoint.`;
+  for(const [id,txt]of [['mean-path',`Running means for 16 hackers up to n=${n}; target 5.`],['var-path',`Running variances for 16 hackers up to n=${n}; target 10.`],['mean-hist',$('mean-hist-note').textContent],['var-hist',$('var-hist-note').textContent]])$(id).setAttribute('aria-label',txt);
+  spread('mean-spread','sdMean','theoryMeanSD');spread('var-spread','sdVariance','theoryVarianceSD');
+  $('comparison').querySelector('tbody').innerHTML=result.snapshots.map(t=>`<tr class="${t.n===n?'selected':''}"><td>${t.n.toLocaleString('en-US')}</td><td>${fmt(t.avgMean)}</td><td>${fmt(t.avgVariance)}</td><td>${fmt(t.sdMean)} / ${fmt(t.theoryMeanSD)}</td><td>${fmt(t.sdVariance)} / ${fmt(t.theoryVarianceSD)}</td><td>${fmt(t.seA)}</td><td>${fmt(t.seB)}</td><td>${fmt(t.avgVariance*(t.n-1)/t.n)}</td></tr>`).join('');
+  const zA=(s.avgMean-5)/s.seA,zB=(s.avgVariance-10)/s.seB;
+  $('run-reading').innerHTML=`<strong>At n = ${n}, m = ${result.m.toLocaleString('en-US')}:</strong> the average mean differs from 5 by ${fmt(s.avgMean-5)} (${zA.toFixed(2)} Monte Carlo SE), and the average sample variance differs from 10 by ${fmt(s.avgVariance-10)} (${zB.toFixed(2)} SE). <p>The corresponding approximate 95% Monte Carlo ranges around the targets are 5 ± ${fmt(1.96*s.seA)} and 10 ± ${fmt(1.96*s.seB)}. These describe run-to-run fluctuations of the averages under the known model; they are not intervals for individual hackers. Occasional values outside these ranges are expected, especially when inspecting several checkpoints.</p>`;
+  $('bias-reading').textContent=`Using SS/n instead gives an average of ${fmt(s.avgVariance*(n-1)/n)}. Its exact expectation at n = ${n} is 10 × (${n-1}/${n}) = ${fmt(10*(n-1)/n)}, whereas the unbiased average Bₙ targets 10. More hackers reduce Monte Carlo noise around this biased expectation; they do not remove the bias at fixed n.`;
+}
+async function run(event) {
+  if(event)event.preventDefault();if(busy)return;
+  if(!$('controls').reportValidity())return;
+  const q={nmax:+$('nmax').value,m:+$('m').value,seed:+$('seed').value};
+  if(!Number.isInteger(q.seed)||q.seed<0||q.seed>4294967295)return;
+  busy=true;for(const id of ['run','new-seed','export','inspect'])$(id).disabled=true;
+  $('status').classList.remove('error');$('status').textContent='Generating scores and updating moments…';
+  try {
+    const r=await simulate(q,v=>{$('progress').style.width=(v*100)+'%';document.querySelector('.progress').setAttribute('aria-valuenow',Math.round(v*100));});
+    result=r;
+    $('inspect').innerHTML=r.ks.map(n=>`<option value="${n}" ${n===r.nmax?'selected':''}>${n.toLocaleString('en-US')}</option>`).join('');
+    $('results').hidden=false;
+    $('run-description').textContent=`Uniform integers 0–10 · ${r.m.toLocaleString('en-US')} hackers × ${r.nmax.toLocaleString('en-US')} systems · seed ${r.seed} · ${r.ks.length} checkpoints`;
+    render();$('status').textContent=`Complete · ${(q.m*q.nmax).toLocaleString('en-US')} scores · change n to inspect a prefix.`;
+  } catch(error) {$('status').textContent='The experiment could not finish. Try fewer hackers or systems.';$('status').classList.add('error');}
+  finally {busy=false;for(const id of ['run','new-seed','inspect'])$(id).disabled=false;$('export').disabled=!result;}
+}
+function exportCSV() {
+  if(!result)return;
+  const rows=[['seed','m','n','avg_mean','avg_unbiased_variance','sd_means','theory_sd_means','sd_variances','theory_sd_variances','mc_se_mean_average','mc_se_variance_average','avg_biased_variance','expected_biased_variance']];
+  for(const s of result.snapshots)rows.push([result.seed,result.m,s.n,s.avgMean,s.avgVariance,s.sdMean,s.theoryMeanSD,s.sdVariance,s.theoryVarianceSD,s.seA,s.seB,s.avgVariance*(s.n-1)/s.n,10*(s.n-1)/s.n]);
+  rows.push([],['seed','m','n','hacker','sample_mean','unbiased_sample_variance']);
+  for(const s of result.snapshots)for(let j=0;j<result.m;j++)rows.push([result.seed,result.m,s.n,j+1,s.means[j],s.variances[j]]);
+  const blob=new Blob([rows.map(row=>row.join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download=`sampling_seed_${result.seed}.csv`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+$('controls').addEventListener('submit',run);
+$('inspect').addEventListener('change',render);
+$('export').addEventListener('click',exportCSV);
+$('new-seed').addEventListener('click',()=>{if(busy)return;const data=new Uint32Array(1);crypto.getRandomValues(data);$('seed').value=data[0];run();});
+$('copy').addEventListener('click',async()=>{
+  try {await navigator.clipboard.writeText($('core-code').textContent);$('copy').textContent='Copied';setTimeout(()=>$('copy').textContent='Copy code',1800);}
+  catch(e){const range=document.createRange();range.selectNodeContents($('core-code'));const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);$('copy').textContent='Selected · Ctrl/Cmd+C';}
+});
+let resizeTimer;window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(render,120);});
+run();
+
+</script>
+</body>
+</html>
