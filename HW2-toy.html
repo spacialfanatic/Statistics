@@ -213,7 +213,7 @@ function rankShifts(ciphertext,model,method='chi') {
   }
   return output.sort((a,b)=>a.score-b.score || a.shift-b.shift);
 }
-// ---------- 3. Original demonstration corpora (separate train / test) ----------
+
 const TRAINING = `Language is a system of patterns shared by a community. The letters in a long English passage do not usually occur with equal frequency. Some sounds and spellings are common because they appear in everyday words, while other combinations are rare. Readers use both the identity of a symbol and the symbols around it to understand a sentence. A letter by itself provides little evidence, but a paragraph contains many overlapping clues. The purpose of a statistical model is to summarize these regularities without memorizing a particular secret message.
 A student entering a university library may first search the catalogue and then look for a book on the appropriate shelf. The title gives a useful clue, although the introduction and the table of contents may reveal more about the subject. When several books discuss the same question, it is sensible to compare their assumptions and their evidence. A clear explanation connects a definition to an example and explains why the example satisfies the definition. Careful study requires patience, repeated practice and a willingness to correct an early misunderstanding.
 Communication between computers involves a series of transformations. An application represents information as bytes, a transport protocol divides the stream into manageable units, and a network forwards packets between machines. Different layers solve different problems. A message may arrive later than expected, and an application must decide how to handle delay or failure. An acknowledgment can confirm that something arrived, but silence alone does not reveal exactly what happened. In a distributed system, observations are local and the order of distant events may remain uncertain.
@@ -237,7 +237,7 @@ One student asked whether a larger field would prevent the search. The others no
 In the afternoon they began drafting their conclusions. A correct demonstration should distinguish what the attacker knows from what the legitimate user knows. A function that claims to recover a key must not quietly read that key from a hidden input. A benchmark should compare its prediction with the answer only after the prediction has been made. These requirements seemed obvious when stated directly, but they were easy to overlook while assembling an interactive page.
 As the light changed, the friends packed their notebooks and left the reading room. They walked back by a different route, passing an orchard and a row of houses. The trip had provided no universal guarantee about every possible encrypted text. It had given them a set of repeatable experiments and a clearer explanation of why the examples behaved as they did. That was enough to make the next stage of the project more precise and more useful.
 Before catching the train they reviewed their remaining questions. They wanted to try a corpus written in another language and to compare a newspaper article with a technical manual. They also planned to test messages made entirely of repeated symbols. Those cases would help them see where the scoring model failed. A good result was not merely a successful recovery; it was an account of the conditions under which recovery was reliable and the reasons it could become uncertain.`;
-// ---------- 4. UI state and safe text rendering ----------
+
 const $ = id => document.getElementById(id);
 const tick = () => new Promise(resolve=>setTimeout(resolve,0));
 let model=trainModel(TRAINING), modelDirty=false, current=null, eccCancelled=false, eccBusy=false, encryptionBusy=false, generation=0, benchmarkData=null;
@@ -305,7 +305,7 @@ $('corpus').addEventListener('input',()=>{modelDirty=true;clearBenchmark();statu
 $('train').onclick=()=>{try{const next=trainModel($('corpus').value);model=next;modelDirty=false;clearBenchmark();updateCorpusStatus();renderAnalysis();}catch(e){status('corpus-status',e.message,true);}};
 $('reset-corpus').onclick=()=>{$('corpus').value=TRAINING;model=trainModel(TRAINING);modelDirty=false;clearBenchmark();updateCorpusStatus();renderAnalysis();};
 $('test-corpus').addEventListener('input',()=>clearBenchmark());
-// ---------- 5. Repeatable held-out benchmark ----------
+
 function seededRandom(seed){let state=seed>>>0;return()=>{state=(Math.imul(1664525,state)+1013904223)>>>0;return state/4294967296;};}
 async function benchmark(modelSnapshot,testText,onRow=()=>{},isStale=()=>false){
   const clean=letters(testText);if(clean.length<500)throw new Error('Test text needs at least 500 A–Z letters.');
@@ -332,7 +332,7 @@ $('benchmark-run').onclick=async()=>{
   finally{$('benchmark-run').disabled=false;}
 };
 $('export').onclick=()=>{if(!benchmarkData)return;const b=benchmarkData,lines=[`seed,${b.seed}`,`training_letters,${b.trainingLetters}`,`test_letters,${b.testLetters}`,'length_letters,trial,start_offset,true_shift,chi_guess,bigram_guess,true_key_chi_rank'];b.trials.forEach(t=>lines.push([t.length,t.trial,t.start,t.key,t.chiGuess,t.bigramGuess,t.trueRank].join(',')));const url=URL.createObjectURL(new Blob([lines.join('\n')],{type:'text/csv;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download='caesar-key-recovery.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
-// ---------- 6. Bounded public-key attack UI ----------
+
 $('cancel-ecc').onclick=()=>{eccCancelled=true;};
 $('attack-ecc').onclick=async()=>{
   if(eccBusy||encryptionBusy)return;
@@ -348,7 +348,7 @@ $('attack-ecc').onclick=async()=>{
   }catch(e){if(token===generation)status('attack-status',e.message,true);}
   finally{eccBusy=false;$('attack-ecc').disabled=!$('packet').value;$('encrypt').disabled=false;$('cancel-ecc').disabled=true;}
 };
-// ---------- 7. Self checks and initial state ----------
+
 function selfCheck(){
   const checks=[['generator on curve',onCurve(G)],['identity',equal(add(G,null),G)],['inverse point',add(G,{x:G.x,y:mod(-G.y)})===null],['group order nG = O',multiply(N_ORDER)===null],['2G vector',pointHex(multiply(2n))==='04c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a'],['Caesar wraparound',caesar('Az, by! é',1)==='Ba, cz! é'],['Caesar round trip',caesar(caesar('Meet me! 123',7),-7)==='Meet me! 123']];
   const a=letterStats(TRAINING),b=letterStats(caesar(TRAINING,11));checks.push(['entropy invariant',Math.abs(a.entropy-b.entropy)<1e-12],['IC invariant',a.ic===b.ic]);
@@ -360,12 +360,12 @@ $('core-source').textContent=[caesar,rankShifts,add,multiply,recoverPrivate].map
 updateCorpusStatus();
 try{const n=selfCheck();status('self-test',`${n} arithmetic and statistical self-checks passed.`);}
 catch(e){status('self-test',e.message,true);}
-// Fill the initial Caesar example immediately; ECC remains an explicit action.
+
 const initialShift=Number($('shift').value),initialMessage=$('message').value;
 current={message:initialMessage,s:initialShift,caesarCipher:caesar(initialMessage,initialShift)};
 $('caesar-output').textContent=current.caesarCipher;$('caesar-decrypt').disabled=false;$('attack-text').value=current.caesarCipher;renderAnalysis();
 status('encrypt-status','Caesar example ready. Click Encrypt with both schemes to generate a fresh ECC packet.');
-// Populate the experimental table from real calculations on each page load.
+
 $('benchmark-run').onclick();
 </script>
 </body>
