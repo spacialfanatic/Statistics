@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Statistics Lab — Integration & the Normal CDF</title>
+<style>
+:root{color-scheme:dark;--bg:#000;--ink:#69d6ca;--muted:#9dbbc5;--line:#2d4054;--panel:#142235;--deep:#101d2d;--soft:#1e3349;--gold:#e3bc7e;--light:#d6e9ee}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.65 Arial,sans-serif}a{color:inherit;text-underline-offset:4px}header,main,footer{max-width:1220px;margin:auto}header{padding:23px 30px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:20px}.brand{font-size:18px;letter-spacing:1px;text-decoration:none;font-weight:bold}.brand span{font-weight:normal}nav{display:flex;gap:24px;font-size:12px}main{padding:0 30px}h1{font-size:clamp(45px,6vw,76px);line-height:1.06;letter-spacing:-3px;font-weight:500;margin:16px 0 24px}h1 em{font-family:Georgia,serif;font-weight:normal}h2{font-size:36px;line-height:1.2;letter-spacing:-1px;font-weight:500;margin:8px 0 22px}h3{font-size:21px;font-weight:500;margin:0 0 13px}p{color:var(--muted);margin:10px 0 18px}.eyebrow{font:11px/1.6 monospace;letter-spacing:1.6px}.hero{display:grid;grid-template-columns:1.3fr 1fr;gap:55px;align-items:center;padding:58px 0}.hero p{max-width:520px}.hero-art{border:1px solid var(--line);background:radial-gradient(ellipse,#24465a,var(--deep) 75%);padding:46px 25px;border-radius:130px 130px 8px 8px;text-align:center}.hero-art strong{display:block;font:42px/1.8 Georgia,serif;color:#a2f0e4}.hero-art small{font:11px monospace;color:var(--muted)}.strip{border-block:1px solid var(--line);display:grid;grid-template-columns:repeat(3,1fr);gap:22px;padding:20px 0}.strip b{font:28px Georgia,serif;display:block}.strip span{font-size:12px;color:var(--muted)}section{padding-top:62px;scroll-margin-top:24px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.card{background:var(--panel);border:1px solid var(--line);border-radius:7px;padding:23px;min-width:0}.card p{font-size:13px}.formula{font:19px/1.9 Georgia,serif;color:var(--light);background:var(--deep);padding:16px 19px;border-radius:4px;overflow-wrap:anywhere;margin:16px 0}.note{font-size:12px;color:var(--muted)}.notice{border-left:3px solid var(--ink);background:var(--panel);padding:15px 20px;margin:20px 0;font-size:13px;color:var(--muted)}.notice b{color:var(--ink)}.controls{display:flex;align-items:end;gap:18px;flex-wrap:wrap;margin:25px 0 20px;padding:20px;background:var(--panel);border:1px solid var(--line);border-radius:7px}.field{flex:1;min-width:135px}.field.wide{flex:2;min-width:230px}label{font-size:12px;display:block;margin-bottom:6px}input,select,button{font:inherit;border:1px solid #3c576b;border-radius:4px;padding:10px 12px;background:var(--deep);color:var(--ink);min-height:44px}input,select{width:100%}button{background:#087e65;color:#f4fffc;cursor:pointer}button:hover{background:#096e5b}a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--ink);outline-offset:4px}.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin:20px 0}.kpis div{border:1px solid var(--line);background:var(--deep);padding:18px;border-radius:6px}.kpis span{font:11px monospace;color:var(--muted);display:block}.kpis strong{font:25px/1.8 Georgia,serif;color:var(--light)}.kpis small{display:block;font:11px monospace;color:var(--gold)}svg.plot{width:100%;height:auto;display:block;overflow:visible;margin-top:15px}.legend{font-size:12px;color:var(--muted);margin:15px 0}.legend span{margin-right:20px}.teal{color:var(--ink)}.gold{color:var(--gold)}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:6px;margin:20px 0}table{width:100%;border-collapse:collapse;background:var(--panel);font:12px/1.7 monospace;color:var(--light)}th,td{padding:11px 14px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}th{color:var(--ink);background:var(--soft);font-weight:normal;font-size:11px}th:first-child,td:first-child{text-align:left}tr:last-child td{border:0}tr.active td{background:#1c3946}caption{caption-side:bottom;text-align:left;padding:12px 16px;color:var(--muted);font:12px/1.6 Arial,sans-serif;background:var(--deep)}details{border-top:1px solid var(--line);padding-top:16px;margin-top:22px}summary{cursor:pointer}pre{padding:20px;background:var(--deep);color:var(--light);overflow:auto;font:12px/1.8 monospace;border-radius:4px}.sources{display:grid;grid-template-columns:1fr 1fr;gap:15px}.sources a{display:block;padding:15px;border-bottom:1px solid var(--line);font-size:13px}.sources small{display:block;color:var(--muted);margin-top:4px}footer{margin-top:55px;padding:25px 30px;border-top:1px solid var(--line);display:flex;justify-content:space-between;color:var(--muted);font-size:11px}.skip{position:absolute;left:-9999px}.skip:focus{left:20px;top:10px;background:var(--panel);padding:10px;z-index:1}.status{font-size:12px;margin-top:12px}.full{grid-column:1/-1}noscript{display:block;padding:20px;color:var(--gold)}
+@media(max-width:720px){header,main,footer{padding-left:20px;padding-right:20px}nav{gap:14px}.hero,.grid,.sources{grid-template-columns:1fr}.hero{gap:25px;padding:38px 0}h1{letter-spacing:-2px}.hero-art{padding:25px}.hero-art strong{font-size:34px}.kpis{grid-template-columns:1fr}.strip{gap:15px}.strip b{font-size:22px}.strip span{font-size:11px}.card{padding:18px}h2{font-size:31px}.controls{gap:12px}section{padding-top:44px}footer{gap:20px}.formula{font-size:17px}nav a:last-child{display:none}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}@media print{body{background:#fff;color:#123}p,.note,.notice{color:#234}.card,.notice,.formula,.kpis div,table,th,caption,pre{background:#f1f5f6;color:#123}.formula,.kpis strong,td{color:#123}.controls,nav,.hero-art{display:none}.hero{display:block;padding:20px 0}h1{font-size:42px}section{padding-top:25px}.card{break-inside:avoid}svg{break-inside:avoid}}
+</style>
+</head>
+<body>
+<a class="skip" href="#integration">Skip to the experiments</a>
+<header><a class="brand" href="#">◈ STATISTICS<span>LAB</span></a><nav aria-label="Navigation"><a href="#integration">Integration</a><a href="#normal">Normal CDF</a><a href="#sources">Sources</a></nav></header>
+<main>
+<div class="hero"><div><div class="eyebrow">HOMEWORK 06 · NUMERICAL ANALYSIS</div><h1>Same area.<br><em>Different slices.</em></h1><p>Partition the domain, partition the values, and compare what the two viewpoints reveal. Then compute the normal CDF with quadrature and an error-function series.</p><a href="#integration">Explore the experiments ↘</a></div><div class="hero-art"><div class="eyebrow">DOMAIN ↔ RANGE</div><strong>∫ f(x) dx<br>= ∫ μ{f &gt; y} dy</strong><small>THE LAYER-CAKE IDENTITY · f ≥ 0</small></div></div>
+<div class="strip"><div><b>9 functions</b><span>smooth, singular and pathological</span></div><div><b>2 viewpoints</b><span>domain partitions and measurable levels</span></div><div><b>3 CDF methods</b><span>trapezoid, Simpson and erf series</span></div></div>
+<noscript>Enable JavaScript to calculate the tables and display the interactive plots. The mathematical discussion remains readable below.</noscript>
+<section id="integration"><div class="eyebrow">EXERCISE 01 / RIEMANN & LEBESGUE</div><h2>Integrate across x.<br>Then integrate across values.</h2>
+<div class="grid"><article class="card"><h3>01 / Domain partitions</h3><p>Split [a,b] into N equal intervals of width h. The midpoint rule uses one function value per interval, so it is a tagged Riemann sum.</p><div class="formula">R<sub>N</sub> = h ∑<sub>i=0</sub><sup>N−1</sup> f(a + (i + ½)h)<br>h = (b − a)/N</div><p>For twice continuously differentiable functions, its error is O(N<sup>−2</sup>). Jumps, corners and an unbounded endpoint require separate analysis; convergence alone does not certify Riemann integrability.</p></article><article class="card"><h3>02 / Measurable value levels</h3><p>For nonnegative f, let H(y) = μ{x ∈ [a,b] : f(x) &gt; y}. Partition [0,M] with δ = M/N. Integrating the simple function δ∑1<sub>{f&gt;(j+½)δ}</sub> gives a range-based approximation.</p><div class="formula">L<sub>N</sub> = δ ∑<sub>j=0</sub><sup>N−1</sup> H((j + ½)δ)<br>∫ min(f,M) dx = ∫<sub>0</sub><sup>M</sup> H(y) dy</div><p>Domain preimages supply the measures. They are obtained analytically here, except for sinc, whose level boundary uses 48 bisection steps. This is a Lebesgue-inspired numerical scheme, not a universal algorithm for measuring arbitrary sets.</p></article></div>
+<div class="controls"><div class="field wide"><label for="function">Function / interval</label><select id="function"></select></div><div class="field"><label for="partitions">Partitions N (8–4096)</label><input id="partitions" type="number" min="8" max="4096" step="1" value="128"></div><button id="integrate" type="button">Compare integrals ↗</button></div>
+<div id="function-note" class="notice" aria-live="polite"></div>
+<div class="kpis" id="integral-values" aria-live="polite"></div>
+<div class="grid"><article class="card"><h3>Domain / f(x)</h3><svg id="domain-plot" class="plot" viewBox="0 0 520 275" role="img" aria-label="Function and midpoint rectangles"></svg><p class="note">At most 32 rectangles are drawn; the calculation uses every selected partition. Singular plots show min(f,M).</p></article><article class="card"><h3>Range / H(y)</h3><svg id="range-plot" class="plot" viewBox="0 0 520 275" role="img" aria-label="Level set measure and range midpoint rectangles"></svg><p class="note">Horizontal coordinate: level y. Vertical coordinate: measure of its domain preimage. The shaded area approximates the same integral.</p></article></div>
+<div class="table-wrap"><table><caption>Convergence at increasing N, plus the selected N. Errors use the full integral. Times are indicative averages per call after warm-up; browser timing and JIT compilation can affect them.</caption><thead><tr><th>N</th><th>R<sub>N</sub></th><th>|R<sub>N</sub> − I|</th><th>L<sub>N</sub></th><th>|L<sub>N</sub> − I|</th><th>R / L μs</th></tr></thead><tbody id="integral-table"></tbody></table></div>
+<article class="card"><h3>Error / refinement</h3><svg id="error-plot" class="plot" viewBox="0 0 900 250" role="img" aria-label="Logarithmic integral error against partition count"></svg><div class="legend"><span class="teal">━ Riemann midpoint</span><span class="gold">━ Lebesgue-inspired levels</span><span>Both axes are logarithmic; plotted zeros use a 10⁻¹⁶ floor.</span></div><p id="bounds" class="note"></p></article>
+<details><summary>Preimage formulas used in the calculation</summary><div class="table-wrap"><table><caption>μ denotes interval length. Values at isolated x do not change any of these measures. The formulas below apply for y ≥ 0.</caption><thead><tr><th>f</th><th>H(y) = μ{f &gt; y}</th></tr></thead><tbody><tr><td>sin x, [0,π]</td><td>π − 2 asin y for 0 ≤ y &lt; 1; otherwise 0</td></tr><tr><td>x², [0,1]</td><td>1 − √y for 0 ≤ y &lt; 1; otherwise 0</td></tr><tr><td>1 then 3</td><td>1 for y &lt; 1; ½ for 1 ≤ y &lt; 3; otherwise 0</td></tr><tr><td>|x − ½|</td><td>1 − 2y for 0 ≤ y &lt; ½; otherwise 0</td></tr><tr><td>1/√x</td><td>1 for y ≤ 1; y⁻² for y &gt; 1</td></tr><tr><td>1 then 0</td><td>½ for 0 ≤ y &lt; 1; otherwise 0</td></tr><tr><td>sin x / x, [0,π]</td><td>unique x solving sin x / x = y, for 0 &lt; y &lt; 1</td></tr><tr><td>Dirichlet / Thomae</td><td>0: every positive superlevel set is countable or finite</td></tr></tbody></table></div></details>
+<div class="grid" style="margin-top:25px"><article class="card"><h3>Where both definitions agree</h3><p>A bounded function on a compact interval is Riemann-integrable exactly when its discontinuities form a set of measure zero. In that case it is Lebesgue-integrable, and both integrals agree.</p><p>The continuous examples, the corner at ½ and the two finite step functions meet this condition. Midpoints can be unusually accurate when a jump or corner aligns with the grid. Refinement need not reduce every error monotonically.</p><p>The range scheme has an O(M/N) worst-case bound on a bounded domain, even though particular examples converge faster or are exact. Neither viewpoint guarantees a faster numerical algorithm.</p></article><article class="card"><h3>Unbounded is a different case</h3><p>For 1/√x, the proper Riemann integral on [0,1] does not exist because the function is unbounded. Its improper Riemann integral and Lebesgue integral both equal 2.</p><div class="formula">∫ min(f,M) dx = 2 − 1/M<br>∫ (f − M)<sub>+</sub> dx = 1/M</div><p>The experiment sets M = √N. It reports the clipped range estimate without adding the known tail, so its error includes truncation. Both δ = 1/√N and the omitted tail tend to zero. A substitution x = t² removes the singularity and gives the constant integrand 2.</p></article><article class="card"><h3>Dirichlet / sampling can mislead</h3><p>For 1<sub>ℚ</sub>, every interval contains rational and irrational numbers: lower Darboux sums are 0 and upper sums are 1. There is no Riemann integral. The Lebesgue integral is 0 because ℚ has measure zero.</p><p>The table deliberately uses rational tags (2i+1)/(2N), giving 1 for every N. Irrational tags give 0 instead. This is a symbolic construction: JavaScript never attempts to classify a floating-point number as a mathematical rational or irrational.</p></article><article class="card"><h3>Thomae / dense spikes, zero area</h3><p>Thomae’s function is 1/q at a reduced fraction p/q and 0 at irrational x. It is continuous at irrational points and discontinuous at rational points. It is therefore Riemann-integrable, with integral 0, matching its Lebesgue integral.</p><p>At the rational midpoint (2i+1)/(2N), the exact value is gcd(2i+1,2N)/(2N). These values produce the table. For any ε &gt; 0, only finitely many reduced fractions have 1/q ≥ ε; small neighborhoods of them make the upper sums arbitrarily small.</p></article></div>
+<div class="notice"><b>Cost and interpretation.</b> Midpoints need N function evaluations and O(1) working memory. Range midpoint sums need N preimage measures; the displayed lower/upper checks add 2N calls. Closed-form measures make most cases O(N), while sinc requires about 48N sine evaluations for its midpoint estimate alone. If preimages must instead be estimated from a domain grid, that introduces a second numerical error and may erase any speed advantage. All examples are nonnegative; signed functions can be treated through f = f⁺ − f⁻ when ∫|f| is finite.</div>
+</section>
+<section id="normal"><div class="eyebrow">EXERCISE 02 / THE STANDARD NORMAL CDF</div><h2>A probability with<br>no elementary antiderivative.</h2>
+<div class="formula">φ(x) = e<sup>−x²/2</sup>/√(2π) &nbsp; · &nbsp; Φ(z) = ∫<sub>−∞</sub><sup>z</sup> φ(x) dx<br>Φ(z) = ½ + ∫<sub>0</sub><sup>z</sup> φ(x) dx = ½[1 + erf(z/√2)]</div>
+<div class="grid"><article class="card"><h3>Quadrature / a finite interval</h3><p>Symmetry removes the infinite endpoint exactly. With h = z/N, the trapezoidal rule weights endpoints by ½. Simpson uses weights 1,4,2,…,4,1 and requires even N.</p><div class="formula">Φ(z) ≈ ½ + (h/3)[φ(0) + φ(z)<br>+ 4∑<sub>odd i</sub>φ(ih) + 2∑<sub>even i, 0&lt;i&lt;N</sub>φ(ih)]</div><p>Trapezoid error is O(N⁻²); Simpson error is O(N⁻⁴) for fixed z. Both use N+1 density evaluations and O(1) memory. Simpson usually reaches a target accuracy with fewer intervals.</p></article><article class="card"><h3>Series / evaluate erf directly</h3><div class="formula">erf(t) = (2/√π) ∑<sub>k=0</sub><sup>∞</sup> (−1)<sup>k</sup>t<sup>2k+1</sup>/[k!(2k+1)]</div><p>The implementation updates each term recursively, avoiding powers and factorials. It stops when the next contribution is below a scaled 10⁻¹⁶ threshold, after the terms have begun decreasing, with a 200-term safety limit.</p><p>The series converges for all finite t in exact arithmetic, but cancellation can lose digits as |t| grows. Here |z| ≤ 5. Tail probabilities near zero are better computed using Φ(z) = ½ erfc(−z/√2), with an algorithm that evaluates erfc directly.</p></article></div>
+<div class="controls"><div class="field"><label for="z">z (−5 to 5)</label><input id="z" type="number" min="-5" max="5" step="any" value="1.96"></div><div class="field"><label for="cdf-n">Even intervals N</label><select id="cdf-n"><option>16</option><option>32</option><option>64</option><option selected>128</option><option>256</option><option>512</option><option>1024</option></select></div><button id="calculate" type="button">Compute Φ(z) ↗</button></div>
+<div class="grid"><article class="card"><h3>Probability / area under φ</h3><svg id="normal-plot" class="plot" viewBox="0 0 520 275" role="img" aria-label="Normal density with cumulative probability shaded"></svg><p class="note">The drawing stops at ±5; the calculation uses symmetry and integrates from 0 to z.</p></article><article class="card"><h3>Current calculation</h3><div id="cdf-values" aria-live="polite"></div><p id="cdf-cost" class="note"></p></article></div>
+<div class="table-wrap"><table><caption>NIST’s web table gives areas from 0 to |z|, rounded to five decimals. The CDF column adds or subtracts these from ½. “Web Δ” compares Simpson with that rounded CDF; it cannot establish accuracy below about 5×10⁻⁶. The second error column uses independent full-precision checkpoints generated with Python math.erfc and checked against scipy.special.ndtr; those extra digits are not taken from the web table.</caption><thead><tr><th>z</th><th>NIST CDF</th><th>Simpson</th><th>Web Δ</th><th>|error| / erfc</th><th>Series |error|</th></tr></thead><tbody id="cdf-table"></tbody></table></div>
+<div class="table-wrap"><table><caption>Maximum absolute error across the displayed reference points. The 0.5 checkpoint is included to avoid relying only on symmetric or integer points.</caption><thead><tr><th>N</th><th>Trapezoid max error</th><th>Simpson max error</th><th>Density calls / z</th></tr></thead><tbody id="cdf-convergence"></tbody></table></div>
+<div class="grid"><article class="card"><h3>Why Liouville rules out an elementary formula</h3><p>Liouville’s integration theorem constrains elementary antiderivatives to an algebraic term plus constant multiples of logarithms in a suitable differential field. A consequence is that ∫e<sup>−x²</sup>dx would be elementary only if a rational function R solved</p><div class="formula">R′(x) − 2xR(x) = 1.</div><p>A pole of R would give R′ a higher-order pole that −2xR cannot cancel. Thus R would have to be a polynomial. For a nonzero polynomial, −2xR has degree one higher than R and cannot be canceled by R′ to yield the constant 1. No such R exists.</p><p>A scaling of x gives the same obstruction for e<sup>−x²/2</sup>. This is the theorem about elementary integration, distinct from Liouville’s theorem in complex analysis.</p></article><article class="card"><h3>Exact representation, numerical evaluation</h3><p>Define erf(t) = (2/√π)∫<sub>0</sub><sup>t</sup>e<sup>−u²</sup>du. Substituting x = √2u into the normal integral gives the exact identity Φ(z) = ½[1 + erf(z/√2)].</p><p>Introducing a special function names the integral and supplies identities, derivatives and series. It does not turn the answer into elementary functions or produce decimal digits without computation.</p><p>For this experiment, Simpson is a short, accurate general method. For many repeated CDF evaluations, production libraries use carefully selected rational approximations, series and asymptotic formulas, with direct tail evaluation to control cancellation. A single power series is less robust across the whole real line.</p></article></div>
+<details><summary>Core JavaScript routines</summary><pre id="code"></pre></details>
+<p class="status" id="verification" aria-live="polite"></p>
+</section>
+<section id="sources"><div class="eyebrow">REFERENCES / METHODS & CHECKPOINTS</div><h2>Sources and numerical checks.</h2><div class="sources"><a href="https://faculty.etsu.edu/gardnerr/4047/notes-Hogg-McKean-Craig/Hogg-McKean-Craig-3-4.pdf">ETSU — The Normal Distribution<small>Assigned reading; Gaussian normalization and the CDF.</small></a><a href="https://itl.nist.gov/div898/handbook/eda/section3/eda3671.htm">NIST — Standard normal probability table<small>Independent web reference, five-decimal areas.</small></a><a href="https://dlmf.nist.gov/7.2">NIST DLMF §7.2 — Error functions<small>Definitions of erf and erfc.</small></a><a href="https://math.stanford.edu/~conrad/papers/elemint.pdf">Brian Conrad — Elementary integration<small>Liouville’s theorem, rational-function criterion and the Gaussian example.</small></a></div><p class="note">All calculations run locally in the browser. The file has no external scripts, fonts or chart dependencies.</p></section>
+</main><footer><span>STATISTICS LAB / HOMEWORK 06</span><span>Integration · Approximation · Probability</span></footer>
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const fmt = x => x === 0 ? '0' : Math.abs(x) < 1e-5 ? x.toExponential(3) : x.toFixed(9);
+const gcd = (a,b) => b ? gcd(b,a%b) : a;
+const sinc = x => x === 0 ? 1 : Math.sin(x)/x;
+function inverseSinc(y) {
+  if (y <= 0) return Math.PI;
+  if (y >= 1) return 0;
+  let a=0, b=Math.PI;
+  for (let i=0;i<48;i++) { const m=(a+b)/2; if (sinc(m)>y) a=m; else b=m; }
+  return (a+b)/2;
+}
+const functions = [
+  {name:'sin(x) · [0, π]',b:Math.PI,max:1,exact:2,f:Math.sin,H:y=>y<1?Math.PI-2*Math.asin(y):0,note:'Smooth and Riemann-integrable. Exact integral: 2. Domain midpoint error is quadratic; the level function has a square-root edge near y = 1.'},
+  {name:'x² · [0, 1]',b:1,max:1,exact:1/3,f:x=>x*x,H:y=>y<1?1-Math.sqrt(y):0,note:'Smooth and Riemann-integrable. Exact integral: 1/3. The domain midpoint value is 1/3 − 1/(12N²); H(y) has an unbounded derivative at zero.'},
+  {name:'1 if x < ½, otherwise 3',b:1,max:3,exact:2,f:x=>x<.5?1:3,H:y=>y<1?1:y<3?.5:0,note:'One jump, exact integral 2. Even N puts the jump on a domain boundary, making domain midpoints exact. Range error depends on whether y = 1 aligns with a level boundary.'},
+  {name:'|x − ½| · [0, 1]',b:1,max:.5,exact:.25,f:x=>Math.abs(x-.5),H:y=>y<.5?1-2*y:0,note:'A continuous corner; exact integral 1/4. Even N splits the two linear pieces exactly. H(y) is linear, so range midpoints are exact as well, up to rounding.'},
+  {name:'1/√x · (0, 1]',b:1,max:1,exact:2,f:x=>1/Math.sqrt(x),H:y=>y<=1?1:1/(y*y),singular:true,note:'Unbounded at zero. The midpoint sum never samples zero. Range integration clips at M = √N and omits a tail of exactly 1/M. The target value 2 is an improper Riemann and a Lebesgue integral.'},
+  {name:'1 if x < ½, otherwise 0',b:1,max:1,exact:.5,f:x=>x<.5?1:0,H:y=>y<1?.5:0,note:'A measurable indicator; exact integral 1/2. Range midpoints are exact for every N. Domain midpoints are exact for even N; odd grids place a tag on the jump.'},
+  {name:'sin(x)/x · [0, π]',b:Math.PI,max:1,exact:1.851937051982466,f:sinc,H:inverseSinc,note:'Use the continuous extension f(0) = 1. Reference: Si(π) ≈ 1.851937051982466, checked with a high-precision series and independent quadrature. Each nontrivial H(y) needs a monotone inverse, computed by bisection.'},
+  {name:'Dirichlet · rational tags',b:1,max:1,exact:0,H:()=>0,path:'dirichlet',note:'Symbolic rational tags give 1 for every N; irrational tags would give 0. The Riemann integral does not exist. The Lebesgue integral is 0. The plot shows only the chosen rational tags, not the full function.'},
+  {name:'Thomae · rational tags',b:1,max:1,exact:0,H:()=>0,path:'thomae',note:'At the exact tag (2i+1)/(2N), reduce the fraction by gcd before evaluating 1/q. Both integrals are 0. Only the selected rational samples are drawn; a finite plot cannot show the complete function.'}
+];
+function midpoint(f,n) {
+  let sum=0;
+  for (let i=0;i<n;i++) sum += f.path ? f.path==='dirichlet'?1:gcd(2*i+1,2*n)/(2*n) : f.f((i+.5)*f.b/n);
+  return sum*f.b/n;
+}
+function levels(f,n,bounds=false) {
+  const M=f.singular?Math.sqrt(n):f.max, dy=M/n;
+  let sum=0, lower=0, upper=0;
+  for (let j=0;j<n;j++) {
+    sum += f.H((j+.5)*dy);
+    if (bounds) { upper+=f.H(j*dy); lower+=f.H((j+1)*dy); }
+  }
+  return {value:sum*dy,lower:lower*dy,upper:upper*dy,M};
+}
+function timing(fn) {
+  let sink=0;
+  for(let i=0;i<10;i++) sink+=fn();
+  const start=performance.now();
+  for(let i=0;i<80;i++) sink+=fn();
+  return Number.isFinite(sink)?(performance.now()-start)*1000/80:NaN;
+}
+function plot(id,series,xmin,xmax,ymin,ymax,xlabel,ylabel,bars=[]) {
+  const el=$(id), W=el.viewBox.baseVal.width, H=el.viewBox.baseVal.height;
+  const X=x=>52+(x-xmin)/(xmax-xmin)*(W-72), Y=y=>H-38-(y-ymin)/(ymax-ymin)*(H-66);
+  let out='';
+  for(let i=0;i<=4;i++) {
+    const x=xmin+(xmax-xmin)*i/4, y=ymin+(ymax-ymin)*i/4;
+    out+=`<path d="M52 ${Y(y)}H${W-20}" stroke="#2d4054"/><text x="44" y="${Y(y)+4}" text-anchor="end">${Number(y.toPrecision(3))}</text><text x="${X(x)}" y="${H-20}" text-anchor="middle">${Number(x.toPrecision(3))}</text>`;
+  }
+  for(const b of bars) out+=`<rect x="${X(b[0])}" y="${Y(b[2])}" width="${Math.max(0,X(b[1])-X(b[0]))}" height="${Math.max(0,Y(0)-Y(b[2]))}" fill="#69d6ca" fill-opacity=".13" stroke="#69d6ca" stroke-opacity=".35"/>`;
+  for(const s of series) {
+    const points=s.data.map(p=>`${X(p[0])},${Y(p[1])}`).join(' ');
+    out+=s.dots?s.data.map(p=>`<circle cx="${X(p[0])}" cy="${Y(p[1])}" r="2.5" fill="${s.color}"/>`).join(''):`<polyline points="${points}" fill="none" stroke="${s.color}" stroke-width="2"/>`;
+  }
+  el.innerHTML=`<g fill="#9dbbc5" font-family="monospace" font-size="10">${out}<text x="${W-20}" y="${H-3}" text-anchor="end">${xlabel}</text><text x="52" y="13">${ylabel}</text></g>`;
+}
+function integrate() {
+  if (!$('partitions').reportValidity()) return;
+  const f=functions[+$('function').value], n=+$('partitions').value, r=midpoint(f,n), l=levels(f,n,true);
+  $('function-note').textContent=f.note;
+  $('integral-values').innerHTML=[['Reference integral',f.exact,f.path==='dirichlet'?'Lebesgue only':'common value / see classification'],['Domain midpoint',r,'absolute error '+fmt(Math.abs(r-f.exact))],['Range levels',l.value,'absolute error '+fmt(Math.abs(l.value-f.exact))]].map(v=>`<div><span>${v[0]}</span><strong>${fmt(v[1])}</strong><small>${v[2]}</small></div>`).join('');
+  const count=Math.min(n,32), bars=[], path=[];
+  if (f.path) {
+    for(let i=0;i<count;i++) {const j=Math.floor(i*n/count);path.push([(j+.5)*f.b/n,f.path==='dirichlet'?1:gcd(2*j+1,2*n)/(2*n)]);}
+  } else {
+    for(let i=0;i<=240;i++) {const x=i*f.b/240;path.push([x,Math.min(l.M,f.f(x))]);}
+    for(let i=0;i<count;i++) bars.push([i*f.b/count,(i+1)*f.b/count,Math.min(l.M,f.f((i+.5)*f.b/count))]);
+  }
+  plot('domain-plot',[{data:path,color:'#69d6ca',dots:!!f.path}],0,f.b,0,l.M*1.1,'x','f(x)',bars);
+  const layers=[], steps=[];
+  for(let i=0;i<=240;i++) layers.push([i*l.M/240,f.H(i*l.M/240)]);
+  for(let i=0;i<count;i++) steps.push([i*l.M/count,(i+1)*l.M/count,f.H((i+.5)*l.M/count)]);
+  plot('range-plot',[{data:layers,color:'#e3bc7e'}],0,l.M,0,f.b*1.1,'level y','H(y)',steps);
+  const sizes=[...new Set([8,16,32,64,128,256,512,1024,n])].sort((a,b)=>a-b), errors=[[],[]];
+  $('integral-table').innerHTML=sizes.map(k=>{
+    const a=midpoint(f,k), b=levels(f,k).value, ea=Math.abs(a-f.exact), eb=Math.abs(b-f.exact);
+    errors[0].push([Math.log10(k),Math.log10(Math.max(1e-16,ea))]);errors[1].push([Math.log10(k),Math.log10(Math.max(1e-16,eb))]);
+    return `<tr class="${k===n?'active':''}"><td>${k}</td><td>${fmt(a)}</td><td>${fmt(ea)}</td><td>${fmt(b)}</td><td>${fmt(eb)}</td><td>${timing(()=>midpoint(f,k)).toFixed(1)} / ${timing(()=>levels(f,k).value).toFixed(1)}</td></tr>`;
+  }).join('');
+  plot('error-plot',errors.map((data,i)=>({data,color:i?'#e3bc7e':'#69d6ca'})),Math.log10(8),Math.log10(sizes.at(-1)),-16,1,'log₁₀ N','log₁₀ absolute error');
+  $('bounds').textContent=`Level sums: lower = ${fmt(l.lower)}, upper = ${fmt(l.upper)}. They bracket ${f.singular?'the clipped integral; add 1/M = '+fmt(1/l.M)+' to both endpoints to bracket the full integral':'the Lebesgue integral'}. The midpoint level estimate lies between these sums. Their gap is at most M(b−a)/N. Sinc preimage boundaries are approximate to bisection precision; floating-point rounding also applies.`;
+}
+const density = x => Math.exp(-x*x/2)/Math.sqrt(2*Math.PI);
+function quadrature(z,n,simpson=true) {
+  const h=z/n;
+  let sum=density(0)+density(z);
+  for(let i=1;i<n;i++) sum += (simpson?(i%2?4:2):2)*density(i*h);
+  return .5+sum*h/(simpson?3:2);
+}
+function erfSeries(z) {
+  const t=z/Math.SQRT2;
+  let term=t, sum=t, k=0;
+  do {
+    k++; term *= -t*t/k;
+    const add=term/(2*k+1); sum+=add;
+    if(k>t*t && Math.abs(add)<1e-16*Math.max(1,Math.abs(sum))) break;
+  } while(k<199);
+  return {value:.5+sum/Math.sqrt(Math.PI),terms:k+1};
+}
+const references = [
+  [-3,.00135,.0013498980316300957],[-2,.02275,.022750131948179219],[-1.96,.02500,.024997895148220435],[-1,.15866,.15865525393145707],[0,.50000,.5],[.5,.69146,.69146246127401312],[1,.84134,.84134474606854293],[1.96,.97500,.97500210485177952],[2,.97725,.97724986805182079],[3,.99865,.99865010196836990]
+];
+function normal() {
+  if(!$('z').reportValidity()) return;
+  const z=+$('z').value,n=+$('cdf-n').value,s=quadrature(z,n),t=quadrature(z,n,false),e=erfSeries(z);
+  $('cdf-values').innerHTML=`<div class="formula">Simpson &nbsp; ${s.toFixed(12)}<br>Trapezoid &nbsp; ${t.toFixed(12)}<br>erf series &nbsp; ${e.value.toFixed(12)}</div>`;
+  $('cdf-cost').textContent=`Quadrature: ${n+1} density evaluations per method. Series: ${e.terms} terms. Mean time per call: Simpson ${timing(()=>quadrature(z,n)).toFixed(2)} μs; trapezoid ${timing(()=>quadrature(z,n,false)).toFixed(2)} μs; series ${timing(()=>erfSeries(z).value).toFixed(2)} μs. Times exclude plotting and tables and are approximate.`;
+  const curve=[],bars=[];
+  for(let i=0;i<=300;i++) {const x=-5+i/30;curve.push([x,density(x)]);}
+  for(let i=0;i<160;i++) {const a=-5+(z+5)*i/160,b=-5+(z+5)*(i+1)/160;bars.push([a,b,density((a+b)/2)]);}
+  plot('normal-plot',[{data:curve,color:'#69d6ca'}],-5,5,0,.44,'x','φ(x)',bars);
+  $('cdf-table').innerHTML=references.map(([x,web,ref])=>`<tr><td>${x}</td><td>${web.toFixed(5)}</td><td>${quadrature(x,n).toFixed(12)}</td><td>${fmt(Math.abs(quadrature(x,n)-web))}</td><td>${fmt(Math.abs(quadrature(x,n)-ref))}</td><td>${fmt(Math.abs(erfSeries(x).value-ref))}</td></tr>`).join('');
+  $('cdf-convergence').innerHTML=[16,32,64,128,256,512,1024].map(k=>`<tr class="${k===n?'active':''}"><td>${k}</td><td>${fmt(Math.max(...references.map(([x,,r])=>Math.abs(quadrature(x,k,false)-r))))}</td><td>${fmt(Math.max(...references.map(([x,,r])=>Math.abs(quadrature(x,k)-r))))}</td><td>${k+1}</td></tr>`).join('');
+  const worst=Math.max(...references.map(([x,,ref])=>Math.abs(quadrature(x,n)-ref)));
+  $('verification').textContent=`At N = ${n}, the largest Simpson error over the ${references.length} checkpoints is ${fmt(worst)}. The implementation also preserves Φ(0) = ½ and Φ(−z) + Φ(z) = 1 up to rounding. Absolute accuracy does not imply small relative error in the far tails; subtracting an area from ½ loses significant digits there.`;
+}
+$('function').innerHTML=functions.map((f,i)=>`<option value="${i}">${f.name.replaceAll('<','&lt;')}</option>`).join('');
+$('integrate').addEventListener('click',integrate);
+$('function').addEventListener('change',integrate);
+$('calculate').addEventListener('click',normal);
+$('cdf-n').addEventListener('change',normal);
+$('code').textContent=[midpoint,levels,quadrature,erfSeries].map(f=>f.toString()).join('\n\n');
+integrate(); normal();
+</script>
+</body>
+</html>
