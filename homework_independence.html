@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Statistics | Statistical Independence</title>
+<style>
+:root{color-scheme:dark;--bg:#000;--ink:#69d6ca;--muted:#9dbbc5;--line:#2d4054;--panel:#142235;--deep:#101d2d;--soft:#1e3349;--gold:#e3bc7e;--light:#d6e9ee}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.65 Arial,sans-serif}a{color:inherit;text-underline-offset:4px}header,main,footer{max-width:1220px;margin:auto}header{padding:23px 30px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:20px}.brand{font-size:18px;letter-spacing:1px;text-decoration:none;font-weight:bold}.brand span{font-weight:normal}nav{display:flex;gap:24px;font-size:12px}main{padding:0 30px}h1{font-size:clamp(45px,6vw,76px);line-height:1.06;letter-spacing:-3px;font-weight:500;margin:16px 0 24px}h1 em{font-family:Georgia,serif;font-weight:normal}h2{font-size:36px;line-height:1.2;letter-spacing:-1px;font-weight:500;margin:8px 0 22px}h3{font-size:21px;font-weight:500;margin:0 0 13px}p{color:var(--muted);margin:10px 0 18px}.eyebrow{font:11px/1.6 monospace;letter-spacing:1.6px}.hero{display:grid;grid-template-columns:1.3fr 1fr;gap:55px;align-items:center;padding:58px 0}.hero p{max-width:520px}.hero-art{border:1px solid var(--line);background:radial-gradient(ellipse,#24465a,var(--deep) 75%);padding:46px 25px;border-radius:130px 130px 8px 8px;text-align:center}.hero-art strong{display:block;font:42px/1.8 Georgia,serif;color:#a2f0e4}.hero-art small{font:11px monospace;color:var(--muted)}.strip{border-block:1px solid var(--line);display:grid;grid-template-columns:repeat(3,1fr);gap:22px;padding:20px 0}.strip b{font:28px Georgia,serif;display:block}.strip span{font-size:12px;color:var(--muted)}section{padding-top:62px;scroll-margin-top:24px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.card{background:var(--panel);border:1px solid var(--line);border-radius:7px;padding:23px;min-width:0}.card p{font-size:13px}.formula{font:19px/1.9 Georgia,serif;color:var(--light);background:var(--deep);padding:16px 19px;border-radius:4px;overflow-wrap:anywhere;margin:16px 0}.note{font-size:12px;color:var(--muted)}.notice{border-left:3px solid var(--ink);background:var(--panel);padding:15px 20px;margin:20px 0;font-size:13px;color:var(--muted)}.notice b{color:var(--ink)}.controls{display:flex;align-items:end;gap:18px;flex-wrap:wrap;margin:25px 0 20px;padding:20px;background:var(--panel);border:1px solid var(--line);border-radius:7px}.field{flex:1;min-width:135px}.field.wide{flex:2;min-width:230px}label{font-size:12px;display:block;margin-bottom:6px}input,select,button{font:inherit;border:1px solid #3c576b;border-radius:4px;padding:10px 12px;background:var(--deep);color:var(--ink);min-height:44px}input,select{width:100%}button{background:#087e65;color:#f4fffc;cursor:pointer}button:hover{background:#096e5b}a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--ink);outline-offset:4px}.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin:20px 0}.kpis div{border:1px solid var(--line);background:var(--deep);padding:18px;border-radius:6px}.kpis span{font:11px monospace;color:var(--muted);display:block}.kpis strong{font:25px/1.8 Georgia,serif;color:var(--light)}.kpis small{display:block;font:11px monospace;color:var(--gold)}svg.plot{width:100%;height:auto;display:block;overflow:visible;margin-top:15px}.legend{font-size:12px;color:var(--muted);margin:15px 0}.legend span{margin-right:20px}.teal{color:var(--ink)}.gold{color:var(--gold)}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:6px;margin:20px 0}table{width:100%;border-collapse:collapse;background:var(--panel);font:12px/1.7 monospace;color:var(--light)}th,td{padding:11px 14px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}th{color:var(--ink);background:var(--soft);font-weight:normal;font-size:11px}th:first-child,td:first-child{text-align:left}tr:last-child td{border:0}tr.active td{background:#1c3946}caption{caption-side:bottom;text-align:left;padding:12px 16px;color:var(--muted);font:12px/1.6 Arial,sans-serif;background:var(--deep)}details{border-top:1px solid var(--line);padding-top:16px;margin-top:22px}summary{cursor:pointer}pre{padding:20px;background:var(--deep);color:var(--light);overflow:auto;font:12px/1.8 monospace;border-radius:4px}.sources{display:grid;grid-template-columns:1fr 1fr;gap:15px}.sources a{display:block;padding:15px;border-bottom:1px solid var(--line);font-size:13px}.sources small{display:block;color:var(--muted);margin-top:4px}footer{margin-top:55px;padding:25px 30px;border-top:1px solid var(--line);display:flex;justify-content:space-between;color:var(--muted);font-size:11px}.skip{position:absolute;left:-9999px}.skip:focus{left:20px;top:10px;background:var(--panel);padding:10px;z-index:1}.status{font-size:12px;margin-top:12px}.full{grid-column:1/-1}noscript{display:block;padding:20px;color:var(--gold)}
+@media(max-width:720px){header,main,footer{padding-left:20px;padding-right:20px}nav{gap:14px}.hero,.grid,.sources{grid-template-columns:1fr}.hero{gap:25px;padding:38px 0}h1{letter-spacing:-2px}.hero-art{padding:25px}.hero-art strong{font-size:34px}.kpis{grid-template-columns:1fr}.strip{gap:15px}.strip b{font-size:22px}.strip span{font-size:11px}.card{padding:18px}h2{font-size:31px}.controls{gap:12px}section{padding-top:44px}footer{gap:20px}.formula{font-size:17px}nav a:last-child{display:none}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}@media print{body{background:#fff;color:#123}p,.note,.notice{color:#234}.card,.notice,.formula,.kpis div,table,th,caption,pre{background:#f1f5f6;color:#123}.formula,.kpis strong,td{color:#123}.controls,nav,.hero-art{display:none}.hero{display:block;padding:20px 0}h1{font-size:42px}section{padding-top:25px}.card{break-inside:avoid}svg{break-inside:avoid}}
+
+body{color:var(--light)}h1,h2,h3,label,summary{color:var(--ink)}.muted,small{color:var(--muted)}.hero{color:var(--ink)}.hero-art strong{font-size:38px}.hero-art{padding:35px 20px}.hero-art .mini{font-size:20px;color:var(--gold)}.metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:22px 0}.metric{padding:16px;background:var(--deep);border:1px solid var(--line);border-radius:6px}.metric span{display:block;font:11px/1.5 monospace;color:var(--muted)}.metric strong{display:block;font:26px/1.8 Georgia,serif;color:var(--ink)}textarea{display:block;width:100%;min-height:180px;resize:vertical;background:var(--deep);border:1px solid var(--line);border-radius:5px;color:var(--light);padding:14px;font:13px/1.65 monospace;margin:10px 0}textarea:focus-visible{outline:2px solid var(--ink);outline-offset:3px}.actions{display:flex;align-items:end;flex-wrap:wrap;gap:12px;margin:16px 0}.actions .field{flex:1;max-width:300px}.secondary{background:var(--soft);color:var(--ink)}.bar-row{display:grid;grid-template-columns:minmax(95px,160px) 1fr;gap:15px;align-items:center;margin:15px 0}.bar-label{overflow-wrap:anywhere;font-size:13px}.bar{height:34px;display:flex;border-radius:4px;overflow:hidden;background:var(--deep)}.bar div{display:flex;align-items:center;justify-content:center;color:#071816;font-size:12px;font-weight:bold;overflow:hidden}.legend{display:flex;gap:20px;flex-wrap:wrap}.legend span{display:flex;align-items:center;gap:7px}.swatch{width:11px;height:11px;border-radius:2px}.error{color:#ffb0af}.warning{border-left:3px solid var(--gold);padding:14px 18px;background:var(--panel);color:var(--gold)}#decision{font-size:15px}tfoot td,tfoot th{background:var(--soft);color:var(--ink)}[hidden]{display:none!important}.table-wrap{max-height:500px}thead th{position:sticky;top:0}tbody th{background:var(--panel)}.table-wrap+.note{margin-top:-7px}.code-note{font-size:12px}footer{display:block}button{white-space:nowrap}.steps{color:var(--gold);font:11px monospace;letter-spacing:1px}
+@media(max-width:720px){.metrics{grid-template-columns:repeat(2,1fr)}.metric:last-child{grid-column:1/-1}.hero-art strong{font-size:29px}.bar-row{grid-template-columns:95px 1fr}.actions .field{max-width:none}header nav a:last-child{display:block}h1{font-size:46px}h2{font-size:28px}}
+@media print{body{color:#123}.actions,textarea,.skip,#error{display:none}h1,h2,h3,label,summary,.metric strong{color:#123}.metrics{grid-template-columns:repeat(5,1fr)}.metric,.bar{background:#eef3f5}.table-wrap{max-height:none;overflow:visible}details pre{white-space:pre-wrap;font-size:10px}.hero-art{display:none}header{padding:12px 30px}section{break-inside:auto}}
+</style>
+</head>
+<body><a class="skip" href="#dataset">Skip to the dataset</a><header><a class="brand" href="#">◈ STATISTICS<span>LAB</span></a><nav aria-label="Navigation"><a href="#theory">Theory</a><a href="#dataset">Experiment</a><a href="#test">Results</a></nav></header><main>
+<div class="hero"><div><div class="eyebrow">HOMEWORK / STATISTICAL INDEPENDENCE</div><h1>One dataset.<br><em>Two variables.</em></h1><p>Build the contingency table, compare observed and expected counts, and test whether knowing X changes the distribution of F.</p><a href="#dataset">Explore the experiment ↘</a></div><div class="hero-art"><div class="eyebrow">THE INDEPENDENCE HYPOTHESIS</div><strong>P(X, F) = P(X) P(F)</strong><strong class="mini">Observed → Expected → χ²</strong><small>FROM FREQUENCIES TO EVIDENCE</small></div></div>
+<div class="strip"><div><b>Joint</b><span>count the observed pairs</span></div><div><b>Conditional</b><span>compare distributions</span></div><div><b>Expected</b><span>test the independence model</span></div></div><noscript>Enable JavaScript to calculate the tables. The theoretical discussion remains readable below.</noscript>
+<section id="theory">
+<div class="steps">01 / PROBABILITY & STATISTICS</div><h2>1. Theoretical background</h2>
+<p>Two random variables X and F are independent if knowing the value of one does not change the probability distribution of the other. In general, independence means P(X ∈ A, F ∈ B) = P(X ∈ A)P(F ∈ B) for every pair of measurable sets A and B. For discrete categorical variables, this reduces to the following equality for every possible pair of values:</p>
+<div class="formula">P(X = x, F = f) = P(X = x) P(F = f)</div>
+<p>Equivalently, P(F = f | X = x) = P(F = f), whenever P(X = x) &gt; 0. In a finite sample, we estimate these probabilities using observed frequencies. Exact equality is not generally expected even when the population variables are independent, because of sampling variation.</p>
+</section>
+<section id="dataset">
+<div class="steps">02 / THE EXPERIMENT</div><h2>2. Dataset</h2>
+<p>The default dataset contains 90 synthetic observations of email-security training (X) and a simulated phishing-email response (F): 18, 10 and 4 clicks out of 30 observations in each training category. Compare it with an exactly independent sample, or paste your own observations. These examples are illustrative, not evidence about real training programmes.</p>
+<p class="muted"><small>Replace the data with any two-column categorical dataset. Use one pair per line, separated by a comma, with the optional header X,F. Quoted labels may contain commas; use doubled quotes inside a quoted label. Keep each observation on one line. Blank lines are ignored; missing values are rejected. Continuous variables must first be grouped into meaningful categories, and the conclusions then concern those categories. Limit: 10,000 observations, 40 categories per variable and 400 cells.</small></p>
+<label for="data">Bivariate dataset (CSV)</label><textarea id="data" spellcheck="false"></textarea>
+<div class="actions"><div class="field"><label for="preset">Load a synthetic dataset</label><select id="preset"><option value="associated">Associated sample / 90 pairs</option><option value="independent">Independent sample / 90 pairs</option><option value="sparse">Small sample / 4 pairs</option></select></div><button id="run" type="button">Calculate ↗</button><button class="secondary" id="reset" type="button">Load example</button></div><p class="note">All calculations run locally in your browser. No external libraries or network connection are required.</p>
+<p id="error" class="error" role="alert"></p>
+</section>
+<div id="results">
+<section>
+<h2>3. Observed and marginal frequencies</h2>
+<p>Let O<sub>ij</sub> be the number of observations in row i and column j. The row total R<sub>i</sub>, column total C<sub>j</sub> and sample size N are obtained by summing the corresponding counts.</p>
+<div class="formula">p̂<sub>ij</sub> = O<sub>ij</sub>/N &nbsp;&nbsp; p̂<sub>i·</sub> = R<sub>i</sub>/N &nbsp;&nbsp; p̂<sub>·j</sub> = C<sub>j</sub>/N</div>
+<h3>Observed contingency table (absolute frequencies)</h3><div class="table-wrap" id="observed"></div>
+<h3>Joint and marginal relative frequencies (%)</h3><div class="table-wrap" id="relative"></div>
+</section>
+<section>
+<h2>4. Conditional frequencies</h2>
+<p>Dividing each cell by its row total gives the distribution of F conditional on X. Dividing by the column total gives the distribution of X conditional on F.</p>
+<div class="formula">p̂(F = f<sub>j</sub> | X = x<sub>i</sub>) = O<sub>ij</sub>/R<sub>i</sub><br>p̂(X = x<sub>i</sub> | F = f<sub>j</sub>) = O<sub>ij</sub>/C<sub>j</sub></div>
+<div class="grid"><div><h3>F given X (%)</h3><div class="table-wrap" id="rowConditional"></div></div><div><h3>X given F (%)</h3><div class="table-wrap" id="colConditional"></div></div></div>
+<h3>Distribution of F within each X category</h3><div id="legend" class="legend"></div><div id="bars"></div>
+<p id="conditionalText" class="muted"></p>
+</section>
+<section>
+<h2>5. Expected frequencies under independence</h2>
+<p>Under the null hypothesis, the expected joint frequency is the sample size multiplied by the product of the marginal proportions.</p>
+<div class="formula">E<sub>ij</sub> = N (R<sub>i</sub>/N)(C<sub>j</sub>/N) = R<sub>i</sub>C<sub>j</sub>/N</div>
+<div class="table-wrap" id="expected"></div>
+</section>
+<section id="test">
+<div class="steps">06 / THE HYPOTHESIS TEST</div><h2>6. Pearson's chi-square test</h2>
+<p><strong>H₀:</strong> X and F are independent. <strong>H₁:</strong> X and F are not independent.</p>
+<div class="formula">χ² = Σ<sub>i</sub> Σ<sub>j</sub> (O<sub>ij</sub> − E<sub>ij</sub>)² / E<sub>ij</sub><br>df = (r − 1)(c − 1)</div>
+<p>A large statistic indicates a greater discrepancy between the observed and expected counts. The p-value is the probability, under H₀ and the chi-square approximation, of a statistic at least as large as the observed one. We use a significance level of α = 0.05.</p>
+<h3>Contribution of each cell to χ²</h3><div class="table-wrap" id="contributions"></div>
+<div class="metrics"><div class="metric"><span>Observations</span><strong id="n"></strong></div><div class="metric"><span>Chi-square</span><strong id="chi"></strong></div><div class="metric"><span>Degrees of freedom</span><strong id="df"></strong></div><div class="metric"><span>p-value (approx.)</span><strong id="p"></strong></div><div class="metric"><span>Cramér’s V</span><strong id="v"></strong></div></div>
+<p class="note">Cramér’s V = √[χ² / (N min(r − 1, c − 1))] measures association strength on a scale from 0 to 1. It does not establish causality.</p><p id="assumptions" class="muted"></p><p id="decision" class="notice" aria-live="polite"></p>
+</section>
+<section>
+<h2>7. Interpretation and conclusion</h2>
+<p id="conclusion"></p>
+<p>Statistical association does not imply causality. In the example, differences in phishing responses could be related to prior experience, job roles, selection bias or other factors. Even if the click rate decreases across training categories, this table alone cannot show that training caused the decrease. A causal claim would require an appropriate research design, such as random assignment, and additional assumptions.</p>
+<p>Independence is a property of a probability distribution. A hypothesis test can provide evidence against independence, but failure to reject H₀ does not prove that independence holds.</p>
+</section><details><summary>View the calculation in JavaScript</summary><p class="code-note">Counts are accumulated from pairs, then converted into marginal totals, expected counts and cell contributions. The p-value uses the upper incomplete gamma function.</p><pre><code id="code"></code></pre></details></div>
+<footer>Statistics — Statistical Independence</footer>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+const example = [['No training',18,12],['Basic',10,20],['Advanced',4,26]];
+const datasets = {associated:example, independent:[['No training',10,20],['Basic',10,20],['Advanced',10,20]], sparse:[['No training',1,1],['Basic',0,2]]};
+const makeCSV = data => 'X,F\n'+data.flatMap(([x,a,b]) => [...Array(a).fill(x+',Clicked'),...Array(b).fill(x+',Ignored')]).join('\n');
+const sum = a => a.reduce((s,v)=>s+v,0);
+const fmt = (v,d=2) => v.toFixed(d);
+const colors = ['#69d6ca','#e3bc7e','#86b7e8','#b3a2df','#e69d9d','#b4d68d'];
+
+function table(id,rows,cols,values,format,totals=false){
+  const t=document.createElement('table');
+  const caption=t.createCaption();caption.textContent={observed:'Observed counts with row and column marginal totals.',relative:'Joint proportions with marginal proportions; the grand total is 100%.',rowConditional:'Each row sums to 100%, apart from rounding.',colConditional:'Each column sums to 100%, apart from rounding.',expected:'Expected counts can be non-integers. Their margins match the observed margins.',contributions:'Cell contributions are nonnegative; the grand total equals Pearson’s χ².'}[id];
+  function line(parent,items,head=false){
+    const tr=document.createElement('tr');
+    items.forEach((v,i)=>{const cell=document.createElement(head||i===0?'th':'td');cell.textContent=v;if(cell.tagName==='TH')cell.scope=head?'col':'row';tr.append(cell)});
+    parent.append(tr);
+  }
+  const h=t.createTHead(), b=t.createTBody();
+  line(h,['X / F',...cols,...(totals?['Total']:[])],true);
+  values.forEach((row,i)=>line(b,[rows[i],...row.map(format),...(totals?[format(sum(row))]:[])]));
+  if(totals) line(t.createTFoot(),['Total',...cols.map((_,j)=>format(sum(values.map(r=>r[j])))),format(sum(values.map(sum)))]);
+  $(id).replaceChildren(t);
+}
+
+function logGamma(z){
+  const c=[676.5203681218851,-1259.1392167224028,771.3234287776531,-176.6150291621406,12.507343278686905,-0.13857109526572012,9.984369578019572e-6,1.5056327351493116e-7];
+  z--;let x=0.9999999999998099;
+  c.forEach((v,i)=>x+=v/(z+i+1));
+  const t=z+7.5;
+  return 0.5*Math.log(2*Math.PI)+(z+0.5)*Math.log(t)-t+Math.log(x);
+}
+function chiTail(chi,df){
+  if(chi===0)return 1;
+  const a=df/2,x=chi/2,scale=Math.exp(a*Math.log(x)-x-logGamma(a));
+  let q;
+  if(x<a+1){
+    let term=1/a,total=term;
+    for(let k=1;k<10000;k++){term*=x/(a+k);total+=term;if(term<total*1e-14)break}
+    q=1-scale*total;
+  }else{
+    let b=x+1-a,c=1e300,d=1/b,h=d;
+    for(let k=1;k<10000;k++){
+      const an=-k*(k-a);b+=2;d=an*d+b;if(Math.abs(d)<1e-300)d=1e-300;
+      c=b+an/c;if(Math.abs(c)<1e-300)c=1e-300;
+      d=1/d;const delta=d*c;h*=delta;if(Math.abs(delta-1)<1e-14)break;
+    }
+    q=scale*h;
+  }
+  return Math.min(1,Math.max(0,q));
+}
+function parseCSV(text){
+  const lines=text.replace(/^\uFEFF/,'').split(/\r?\n/).filter(l=>l.trim());
+  const data=lines.map((line,i)=>{
+    const fields=[];let at=0;
+    while(at<=line.length){
+      const match=/^\s*(?:"((?:[^"]|"")*)"\s*|([^",]*))(,|$)/.exec(line.slice(at));
+      if(!match)throw Error('Invalid CSV on nonblank line '+(i+1)+'.');
+      fields.push((match[1]===undefined?match[2]:match[1].replaceAll('""','"')).trim());
+      at+=match[0].length;if(!match[3])break;
+    }
+    return fields;
+  });
+  if(data[0]?.length===2&&data[0].join(',').toUpperCase()==='X,F')data.shift();
+  if(!data.length||data.some(r=>r.length!==2||r.some(v=>!v)))throw Error('Enter two nonempty categories per observation, with an optional X,F header.');
+  if(data.length>10000)throw Error('Use at most 10,000 observations.');
+  return data;
+}
+function analyse(data){
+  const xs=[...new Set(data.map(r=>r[0]))],fs=[...new Set(data.map(r=>r[1]))];
+  if(xs.length<2||fs.length<2)throw Error('Each variable must have at least two categories.');
+  if(xs.length>40||fs.length>40||xs.length*fs.length>400)throw Error('Use at most 40 categories per variable and 400 table cells. Group numerical values before testing.');
+  const O=xs.map(()=>fs.map(()=>0)),N=data.length;
+  const xi=new Map(xs.map((x,i)=>[x,i])),fi=new Map(fs.map((f,j)=>[f,j]));
+  data.forEach(([x,f])=>O[xi.get(x)][fi.get(f)]++);
+  const R=O.map(sum),C=fs.map((_,j)=>sum(O.map(row=>row[j])));
+  const E=R.map(r=>C.map(c=>r*c/N));
+  const Q=O.map((row,i)=>row.map((o,j)=>(o-E[i][j])**2/E[i][j]));
+  const chi=sum(Q.map(sum)),df=(xs.length-1)*(fs.length-1),p=chiTail(chi,df);
+  return {xs,fs,O,N,R,C,E,Q,chi,df,p};
+}
+
+function calculate(){
+  try{
+    const {xs,fs,O,N,R,C,E,Q,chi,df,p}=analyse(parseCSV($('data').value));
+    const pct=v=>fmt(v*100,1)+'%';
+    table('observed',xs,fs,O,String,true);
+    table('relative',xs,fs,O.map(r=>r.map(o=>o/N)),pct,true);
+    table('rowConditional',xs,fs,O.map((r,i)=>r.map(o=>o/R[i])),pct);
+    table('colConditional',xs,fs,O.map(r=>r.map((o,j)=>o/C[j])),pct);
+    table('expected',xs,fs,E,v=>fmt(v),true);
+    table('contributions',xs,fs,Q,v=>fmt(v,3),true);
+    $('legend').replaceChildren();$('bars').replaceChildren();
+    fs.forEach((f,j)=>{const item=document.createElement('span'), sw=document.createElement('i');sw.className='swatch';sw.style.background=colors[j%colors.length];item.append(sw,document.createTextNode(f));$('legend').append(item)});
+    O.forEach((r,i)=>{const row=document.createElement('div'),label=document.createElement('span'),bar=document.createElement('div');row.className='bar-row';bar.className='bar';label.textContent=xs[i];label.className='bar-label';r.forEach((v,j)=>{const part=document.createElement('div'),q=v/R[i];part.style.width=(100*q)+'%';part.style.background=colors[j%colors.length];part.title=fs[j]+': '+pct(q);if(q>=.10)part.textContent=pct(q);bar.append(part)});row.append(label,bar);$('bars').append(row)});
+    $('conditionalText').textContent='Overall frequency of '+fs[0]+': '+pct(C[0]/N)+'. Compare this with the conditional proportions in the bars.';
+    $('n').textContent=N;$('chi').textContent=fmt(chi,3);$('df').textContent=df;$('p').textContent=p<0.0001?(p===0?'≈ 0':p.toExponential(3)):fmt(p,5);
+    $('v').textContent=fmt(Math.sqrt(chi/(N*Math.min(xs.length-1,fs.length-1))),3);
+    const min=Math.min(...E.flat()), small=E.flat().filter(e=>e<5).length/E.flat().length, reliable=xs.length===2&&fs.length===2?min>=5:min>=1&&small<=0.2;
+    $('assumptions').textContent='Minimum expected count: '+fmt(min)+'. '+fmt(100*small,1)+'% of cells have expected counts below 5. '+(reliable?'The usual expected-count guideline is satisfied.':'The usual expected-count guideline is not satisfied; the approximation may be unreliable.')+' For 2 × 2 tables this page requires every expected count to be at least 5; otherwise it uses no count below 1 and at most 20% below 5. Observations must be independent of one another, categories mutually exclusive, and the sampling design suitable. Repeated measurements or clustered observations require a different analysis. Pearson’s statistic is shown without Yates’s correction.';
+    $('decision').className=reliable?'notice':'warning';
+    $('decision').textContent=!reliable?'Do not draw a firm conclusion from this approximate p-value. Consider Fisher’s exact test for a 2 × 2 table, or an appropriate exact or Monte Carlo test for larger tables.':p<.05?'Reject H₀ at α = 0.05. The data provide evidence of statistical dependence.':'Fail to reject H₀ at α = 0.05. The data do not provide sufficient evidence of dependence.';
+    $('conclusion').textContent='The observed chi-square statistic is '+fmt(chi,3)+' with '+df+' degrees of freedom. '+(!reliable?'Small expected counts limit the interpretation.':p<.05?'Assuming independent observations, the differences between observed and expected frequencies are statistically significant at the 5% level.':'Assuming independent observations, the differences are not statistically significant at the 5% level.');
+    $('error').textContent='';$('results').hidden=false;
+  }catch(e){$('error').textContent=e.message;$('results').hidden=true}
+}
+$('run').onclick=calculate;
+$('reset').onclick=()=>{$('data').value=makeCSV(datasets[$('preset').value]);calculate()};
+$('preset').onchange=()=>$('reset').click();
+$('code').textContent=analyse.toString();
+$('reset').click();
+</script>
+</body></html>
